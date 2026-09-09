@@ -39,7 +39,7 @@ scenario:
   clusters: [25]
   opts: [Co2L-CCL-1H] # hyphen-joined options: 3h/6h/24h/Nseg temporal | Co2L/Ep/CH4L caps & prices | ATK/ATKc autarky | {carrier}+p/c/m scale | CCL/BAU/SAFE/RES/EQ solve constraints — see doc/user-guide/wildcards.md
   planning_horizons: # investment years for myopic; costs year for overnight
-  - 2030
+  - 2036
   sopts:
   - "144h"
 
@@ -192,7 +192,7 @@ load_options:
   source: "gegis" # "gegis" (scenario-based: 2011, 2013, 2018 available) or "demcast" (hourly 2000–2024 available): view [issue #1724](https://github.com/pypsa-meets-earth/pypsa-earth/issues/1724) for more details
   weather_year: 2018 # Weather year of the load profile
   prediction_year: 2040 # Valid only if "gegis" used as a source
-  scale: 1.7 # scales all load time-series, i.e. 2 = doubles load
+  scale: 0.7564 # 校準至 2036 目標發電量 667.3 TWh（來源：第10次電力供需基本計畫）。公式 new_scale = 1.7 × 667.3 / 1499.83，其中 1499.83 TWh 為 prediction_year=2040、scale=1.7 時 build_demand_profiles.py 對 KR 產生的模型年（8736h）總用電量
 
 # ------------------- Electricity grid -------------------
 electricity:
@@ -519,7 +519,7 @@ storage_techs:
 
 # ------------------- Costs & emissions -------------------
 costs:
-  year: 2030 # cost file selection, i.e. costs_2030.csv in this case; reference year for costs is always 2020
+  year: 2035 # cost file selection (costs_2035.csv); technology-data v0.13.2 的最接近 2036 的可用年份；reference year for costs is always 2020
   technology_data_version: v0.13.2
   discountrate: [0.071] #, 0.086, 0.111]
   country_specific_data: "" # (optional) Reference to the desired technology-data directory for techno-economic input data; Only "" and "US" supported, for other values check the technology-data output directory
