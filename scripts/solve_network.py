@@ -269,12 +269,50 @@ def add_CCL_constraints(n, config):
     lhs = capacity_variable.groupby(grouper).sum()
     logger.info(f"CCL: model groups {list(lhs.indexes['group'])}")
 
+    # Existing (non-extendable) capacity enters the limit as a constant, so the
+    # csv values are read as *total* capacity rather than new build only.  This
+    # is correct for both generator layouts add_electricity produces:
+    #   - renewables are a single extendable generator carrying the existing
+    #     capacity in p_nom_min, so there is no non-extendable twin and the
+    #     constant is 0 (no double counting);
+    #   - conventional carriers get a separate non-extendable generator for the
+    #     existing fleet plus a fresh extendable one, so the constant restores
+    #     the existing capacity that the extendable variable alone omits.
+    # The constant is applied to the right-hand side, which is equivalent to
+    # adding it to the left-hand side but avoids re-aligning the grouped
+    # expression's MultiIndex coordinate.
+    include_existing = config["electricity"]["agg_p_nom_limits"].get(
+        "include_existing", True
+    )
+    if include_existing:
+        fixed = n.generators.query("~p_nom_extendable")
+        fixed_capacity = fixed.p_nom.groupby(
+            [
+                fixed.bus.map(n.buses.country).rename("country"),
+                fixed.carrier.map(lambda c: carrier_map.get(c, c)).rename("carrier"),
+            ]
+        ).sum()
+        logger.info(
+            "CCL: include_existing=True, fixed capacity per group "
+            f"{ {g: round(float(v), 1) for g, v in fixed_capacity.items()} }"
+        )
+    else:
+        fixed_capacity = pd.Series(dtype=float)
+        logger.info("CCL: include_existing=False, existing capacity not counted")
+
+    def _existing(target_index):
+        """Fixed capacity aligned to ``target_index`` as a 'group' DataArray."""
+        aligned = fixed_capacity.reindex(target_index, fill_value=0.0)
+        array = xr.DataArray(aligned)
+        return array.rename({array.dims[0]: "group"})
+
     n_min = n_max = 0
     minimum = xr.DataArray(agg_p_nom_minmax["min"].dropna()).rename(dim_0="group")
     index = minimum.indexes["group"].intersection(lhs.indexes["group"])
     if not index.empty:
         n.model.add_constraints(
-            lhs.sel(group=index) >= minimum.loc[index], name="agg_p_nom_min"
+            lhs.sel(group=index) >= minimum.loc[index] - _existing(index),
+            name="agg_p_nom_min",
         )
         n_min = len(index)
 
@@ -282,7 +320,8 @@ def add_CCL_constraints(n, config):
     index = maximum.indexes["group"].intersection(lhs.indexes["group"])
     if not index.empty:
         n.model.add_constraints(
-            lhs.sel(group=index) <= maximum.loc[index], name="agg_p_nom_max"
+            lhs.sel(group=index) <= maximum.loc[index] - _existing(index),
+            name="agg_p_nom_max",
         )
         n_max = len(index)
 
