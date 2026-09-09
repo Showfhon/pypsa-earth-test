@@ -36,16 +36,16 @@ run:
 scenario:
   simpl: [""]
   ll: ["copt"]
-  clusters: [25]
-  opts: [Co2L-CCL-1H] # hyphen-joined options: 3h/6h/24h/Nseg temporal | Co2L/Ep/CH4L caps & prices | ATK/ATKc autarky | {carrier}+p/c/m scale | CCL/BAU/SAFE/RES/EQ solve constraints — see doc/user-guide/wildcards.md
+  clusters: [30]
+  opts: [Co2L-3h] # hyphen-joined options: 3h/6h/24h/Nseg temporal | Co2L/Ep/CH4L caps & prices | ATK/ATKc autarky | {carrier}+p/c/m scale | CCL/BAU/SAFE/RES/EQ solve constraints — see doc/user-guide/wildcards.md
   planning_horizons: # investment years for myopic; costs year for overnight
   - 2030
   sopts:
   - "144h"
 
 snapshots:
-  start: "2018-01-01"
-  end: "2018-12-31"
+  start: "2013-01-01"
+  end: "2014-01-01"
   inclusive: "left" # end is not inclusive
 
 results_dir: results/ # solved networks and sector postprocessing (RESDIR in Snakefile)
@@ -191,8 +191,8 @@ base_network:
 load_options:
   source: "gegis" # "gegis" (scenario-based: 2011, 2013, 2018 available) or "demcast" (hourly 2000–2024 available): view [issue #1724](https://github.com/pypsa-meets-earth/pypsa-earth/issues/1724) for more details
   weather_year: 2013 # Weather year of the load profile
-  prediction_year: 2036 # Valid only if "gegis" used as a source
-  scale: 1.7 # scales all load time-series, i.e. 2 = doubles load
+  prediction_year: 2030 # Valid only if "gegis" used as a source
+  scale: 1 # scales all load time-series, i.e. 2 = doubles load
 
 # ------------------- Electricity grid -------------------
 electricity:
@@ -261,18 +261,24 @@ electricity:
 lines:
   ac_types:
     132.: "243-AL1/39-ST1A 20.0"
+    154.: "243-AL1/39-ST1A 20.0"
     220.: "Al/St 240/40 2-bundle 220.0"
     300.: "Al/St 240/40 3-bundle 300.0"
+    345.: "Al/St 240/40 3-bundle 300.0"
     380.: "Al/St 240/40 4-bundle 380.0"
     500.: "Al/St 240/40 4-bundle 380.0"
     750.: "Al/St 560/50 4-bundle 750.0"
+    765.: "Al/St 560/50 4-bundle 750.0"
   dc_types:
+    154.: "HVDC XLPE 1000"
+    345.: "HVDC XLPE 1000"
     500.: "HVDC XLPE 1000"
+    765.: "HVDC XLPE 1000"
   s_max_pu: 0.7
   s_nom_max: .inf
   s_nom_max_min: -.inf
   length_factor: 1.25
-  under_construction: "keep"
+  under_construction: "zero"
 
 links:
   p_max_pu: 1.0
@@ -289,7 +295,7 @@ transformers:
 atlite:
   nprocesses: 4
   cutouts:
-    cutout-2018-era5:
+    cutout-2013-era5:
       module: era5
       dx: 0.3 # cutout resolution
       dy: 0.3 # cutout resolution
@@ -298,7 +304,7 @@ atlite:
       # The cutout spatial extent [x,y] is automatically set by country selection. See `countries:` option above and 'build_cutout.py'.
       # x: [-12., 35.]  # set cutout range manual, instead of automatic by boundaries of country
       # y: [33., 72]    # manual set cutout range
-  default: cutout-2018-era5
+  default: cutout-2013-era5
 
 renewable:
   onwind:
