@@ -1,0 +1,9 @@
+,,2035,2035
+country,carrier,min,max
+KR,solar,59130,72270
+KR,onwind,24545,30000
+KR,offwind-ac,28382,34689
+KR,offwind-dc,0,0
+KR,CCGT,62900,62900
+KR,nuclear,31700,31700
+KR,biomass,1620,1620
