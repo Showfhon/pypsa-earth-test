@@ -1,3 +1,5 @@
-,,2030,2030,2040,2040,2050,2050
-,,min,max,min,max,min,max
-country,carrier,,,,,,
+,,2036,2036
+country,carrier,min,max
+KR,solar,59130,72270
+KR,onwind+offwind-ac,30680,37498
+KR,CCGT,56610,69190

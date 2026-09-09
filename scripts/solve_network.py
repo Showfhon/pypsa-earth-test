@@ -191,106 +191,105 @@ def prepare_network(n, solve_opts, config):
 
 def add_CCL_constraints(n, config):
     """
-    Add CCL (country & carrier limit) constraint to the network.
+    Per-carrier, per-country capacity limits.
 
-    Add minimum and maximum levels of generator nominal capacity per carrier
-    for individual countries. Opts and path for agg_p_nom_minmax.csv must be defined
-    in config.yaml. Default file is available at data/agg_p_nom_minmax.csv.
-    Parameter include_existing in config.yaml decides whether existing capacities
-    are considered in the CCL constraints. Default is false.
+    Supports both the legacy single-header csv (country,carrier,min,max) and a
+    two-level header keyed by planning horizon.  A csv carrier written as
+    "a+b" constrains those carriers jointly, which is needed where the policy
+    target is published as an aggregate (e.g. Korean wind, which the 10th BPLE
+    does not split into onshore and offshore).
 
-    Parameters
-    ----------
-    n : pypsa.Network
-    config : dict
-
-    Example
-    -------
-    scenario:
-        opts: [CCL-Co2L-24H]
-    electricity:
-        agg_p_nom_limits:
-            file: data/agg_p_nom_minmax.csv
-            include_existing: false
+    The grouper is built from the model's 'Generator-ext' coordinate because
+    linopy >= 0.3.9 aligns groupers by position and refuses to reindex.
     """
-    agg_p_nom_limits = config["electricity"].get("agg_p_nom_limits")
+    _ccl_file = config["electricity"]["agg_p_nom_limits"]["file"]
 
-    try:
-        agg_p_nom_minmax = read_csv_nafix(
-            snakemake.input.agg_p_nom_minmax, index_col=list(range(2)), header=[0, 1]
-        )[snakemake.wildcards.planning_horizons]
-    except IOError:
-        logger.exception(
-            "Need to specify the path to a .csv file containing "
-            "aggregate capacity limits per country in "
-            "config['electricity']['agg_p_nom_limit']."
+    with open(_ccl_file) as _f:
+        _f.readline()
+        _l1 = _f.readline()
+    _two_level = "min" in _l1.lower() and "max" in _l1.lower()
+
+    if _two_level:
+        agg_p_nom_minmax = pd.read_csv(_ccl_file, index_col=[0, 1], header=[0, 1])
+        agg_p_nom_minmax.columns = pd.MultiIndex.from_tuples(
+            [(str(a).strip(), str(b).strip().lower())
+             for a, b in agg_p_nom_minmax.columns]
         )
-    logger.info(
-        "Adding per carrier generation capacity constraints for " "individual countries"
+        _horizons = list(dict.fromkeys(agg_p_nom_minmax.columns.get_level_values(0)))
+        try:
+            _ph = str(config["scenario"]["planning_horizons"][0])
+        except Exception:
+            _ph = None
+        _pick = _ph if _ph in _horizons else _horizons[0]
+        if _ph not in _horizons:
+            logger.warning(
+                f"CCL: planning horizon {_ph} not in {_ccl_file} "
+                f"(available: {_horizons}); using {_pick}."
+            )
+        agg_p_nom_minmax = agg_p_nom_minmax[_pick]
+    else:
+        agg_p_nom_minmax = pd.read_csv(_ccl_file, index_col=[0, 1])
+        agg_p_nom_minmax.columns = [
+            str(c).strip().lower() for c in agg_p_nom_minmax.columns
+        ]
+
+    agg_p_nom_minmax.index = pd.MultiIndex.from_tuples(
+        [(str(a).strip(), str(b).strip()) for a, b in agg_p_nom_minmax.index],
+        names=["country", "carrier"],
     )
+    agg_p_nom_minmax = agg_p_nom_minmax.apply(pd.to_numeric, errors="coerce")
+    for _col in ("min", "max"):
+        if _col not in agg_p_nom_minmax.columns:
+            logger.warning(f"CCL: no '{_col}' column in {_ccl_file}; skipped.")
+            agg_p_nom_minmax[_col] = float("nan")
+
+    logger.info(
+        "Adding per carrier generation capacity constraints for individual countries"
+    )
+    logger.info(f"CCL: csv index {list(agg_p_nom_minmax.index)}")
 
     capacity_variable = n.model["Generator-p_nom"]
+    ext_i = capacity_variable.coords["Generator-ext"].to_index()
 
-    # get carriers to which CCL constraints apply
-    ccl_carriers = agg_p_nom_minmax.index.get_level_values(1).unique()
-    ext_carriers = n.generators.query("p_nom_extendable").carrier.unique()
-    ccl_carriers = ccl_carriers[ccl_carriers.isin(ext_carriers)]
+    carrier_map = {}
+    for _c, _car in agg_p_nom_minmax.index:
+        for _part in str(_car).split("+"):
+            carrier_map[_part.strip()] = str(_car)
 
-    # If no CCL carriers found, return early
-    if not ccl_carriers.any():
-        logger.info(
-            "No CCL carriers found that are extendable. Skipping CCL constraints."
-        )
-        return
-
-    # Get extendable generators for relevant carriers
-    gens = n.generators[n.generators.carrier.isin(ccl_carriers)]
-    gens = gens.rename_axis(index="Generator-ext")
-
-    # Prepare country and carrier grouper
+    gens = n.generators.loc[ext_i]
     grouper = pd.concat(
-        [gens.bus.map(n.buses.country).rename("country"), gens.carrier], axis=1
+        [
+            gens.bus.map(n.buses.country).rename("country"),
+            gens.carrier.map(lambda c: carrier_map.get(c, c)).rename("carrier"),
+        ],
+        axis=1,
     )
+    grouper.index.name = "Generator-ext"
 
-    # Prepare LHS
     lhs = capacity_variable.groupby(grouper).sum()
+    logger.info(f"CCL: model groups {list(lhs.indexes['group'])}")
 
-    # Obtain existing capacities
-    existing_capacities = gens.p_nom.groupby(
-        [grouper["country"], grouper["carrier"]]
-    ).sum()
-
-    # Obtain minimum and maximum constraint limits
-    min_values = agg_p_nom_minmax["min"]
-    max_values = agg_p_nom_minmax["max"]
-
-    # Adjust limits if existing capacities are considered
-    if agg_p_nom_limits.get("include_existing", False):
-        min_values = (min_values - existing_capacities).clip(lower=0)
-        max_values = (max_values - existing_capacities).clip(lower=0)
-        logger.info(
-            f"Considered existing capacities in CCL constraints for carrier {c}."
-        )
-
-    # Convert limits to xarray for masking
-    min_values = xr.DataArray(min_values.dropna()).rename(dim_0="group")
-    max_values = xr.DataArray(max_values.dropna()).rename(dim_0="group")
-
-    # Valid constraints
-    valid_min_index = min_values.indexes["group"].intersection(lhs.indexes["group"])
-    valid_max_index = max_values.indexes["group"].intersection(lhs.indexes["group"])
-
-    if not valid_min_index.empty:
+    n_min = n_max = 0
+    minimum = xr.DataArray(agg_p_nom_minmax["min"].dropna()).rename(dim_0="group")
+    index = minimum.indexes["group"].intersection(lhs.indexes["group"])
+    if not index.empty:
         n.model.add_constraints(
-            lhs.sel(group=valid_min_index) >= min_values.loc[valid_min_index],
-            name="agg_p_nom_min",
+            lhs.sel(group=index) >= minimum.loc[index], name="agg_p_nom_min"
         )
+        n_min = len(index)
 
-    if not valid_max_index.empty:
+    maximum = xr.DataArray(agg_p_nom_minmax["max"].dropna()).rename(dim_0="group")
+    index = maximum.indexes["group"].intersection(lhs.indexes["group"])
+    if not index.empty:
         n.model.add_constraints(
-            lhs.sel(group=valid_max_index) <= max_values.loc[valid_max_index],
-            name="agg_p_nom_max",
+            lhs.sel(group=index) <= maximum.loc[index], name="agg_p_nom_max"
         )
+        n_max = len(index)
+
+    logger.info(f"CCL: applied {n_min} minimum and {n_max} maximum constraints")
+    _unmatched = agg_p_nom_minmax.index.difference(lhs.indexes["group"])
+    if len(_unmatched):
+        logger.warning(f"CCL: csv rows with no matching model group: {list(_unmatched)}")
 
 
 def add_EQ_constraints(n, o, scaling=1e-1):

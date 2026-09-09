@@ -77,3 +77,11 @@ screenlog*
 !data/demand/unsd/paths/Energy_Statistics_Database.xlsx
 site/
 !data/industry/ammonia_plants.csv
+*.bak
+*.bak2
+*.sh
+run_log.txt
+resources/
+results/
+networks/
+data/*.nc
