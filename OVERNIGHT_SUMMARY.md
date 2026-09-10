@@ -1,10 +1,10 @@
 # 2026-09-09 夜間執行摘要
 
-> 最後更新 23:00。**目前尚未產出任何成功的求解結果**（`results/KR2036_opus/networks/` 是空的）。
+> 最後更新 2026-09-10 00:25。基準線（10 節點/3H/無 CCL）執行中，CCL 版已排入自動鏈。
 > 但過程中找到並修正了三個實質的資料/設定錯誤，並把求解失敗的原因縮小到一個具體嫌疑。
 
 ## 一句話
-CCL 五個 group 同時啟用會讓模型 infeasible，依你指示改跑無 CCL 版本；
+CCL 的「infeasible」已查明是**需求未校準**的後果，不是 CCL 的問題 —— 校準後 CCL 完全可用。
 過程中修正了**核能被設計壽命誤殺**、**biomass 標籤漏映射**、**需求量未校準（2.25 倍）** 三個問題。
 但無 CCL 版本在 30 節點 / 3H 下，IPM 與 dual simplex 都無法收斂 —— 已確認**不是時間不夠**，
 而是數值條件問題，最新嫌疑是 `objective_constant`（見第五節）。
@@ -115,7 +115,56 @@ scale_new = 1.7 x 667.3 / 1504.3 = 0.7541
 
 ---
 
-## 四、CCL 為何不可行（未解，依你指示先擱置）
+## 四、CCL「不可行」的真正原因 —— 一個模型合理性檢查
+
+> **結論已更新（原本記為「未解」，現已查明）：CCL 本身沒問題，可以放回研究設計。**
+
+### 這是模型的正確行為，不是 bug
+
+需求灌到官方目標的 2.25 倍（1,504 TWh、尖峰 244 GW）時，第10次電力供需基本計畫的
+2036 容量規劃**根本供不起**：CCL 把 solar ≤72.3、wind ≤37.5、CCGT =64.6、
+nuclear =31.7、biomass =1.62 GW 全部鎖死，加上既有燃煤 31.2 GW，
+可調度容量上限約 **238 GW < 尖峰 244 GW**。模型正確地判定不可行。
+
+**這反過來是一個很好的模型合理性驗證**：官方容量規劃是配著官方需求預測做的，
+把需求灌大 2.25 倍後容量規劃就撐不住 —— 模型如實反映了這個物理事實。
+
+### 歸因證據
+
+同樣的程式、同樣的 csv、同樣的求解器設定，只換網路：
+
+| 網路 | 需求尖峰 | 結果 |
+|---|---:|---|
+| 10 節點（scale 1.7，未校準） | 243.9 GW | **infeasible** |
+| 30 節點（scale 0.7541，已校準） | 108.2 GW | **optimal** |
+
+逐項累加（30 節點、240h、無 CO2、無 reserve）：
+
+| 加到第幾項 | 結果 |
+|---|---|
+| solar | optimal |
+| + onwind+offwind-ac+offwind-dc | optimal |
+| + CCGT | optimal |
+| + nuclear | optimal |
+| + biomass（全部五項） | **optimal** |
+| 字母序全部五項 | optimal |
+
+### 排除的假說：約束對齊錯位
+
+曾懷疑 `lhs`（依 group 內部順序）與 `rhs`（依 csv 順序）錯位。實測：
+
+```
+csv 順序      : solar, onwind+offwind-ac+offwind-dc, CCGT, nuclear, biomass
+lhs group 順序: nuclear, CCGT, solar, biomass, onwind+offwind-ac+offwind-dc   ← 確實不同
+sel 後 lhs    : solar, onwind+offwind-ac+offwind-dc, CCGT, nuclear, biomass
+rhs           : solar, onwind+offwind-ac+offwind-dc, CCGT, nuclear, biomass
+rhs 值        : [59130, 30680, 64600, 31700, 1620]
+>>> 一一對應
+```
+`lhs` 內部順序確實與 csv 不同，但 `.sel(group=index)` 與 `.loc[index]` 都**按標籤**重排，
+最終對齊正確。不是對齊 bug。
+
+## 四之二、（歷史記錄）當初的排除過程
 
 用 30 節點網路的前 240 小時逐項排除（每個組合幾秒）：
 
@@ -148,7 +197,11 @@ csv 的 `KR,wind,...` 改成 `KR,onwind+offwind-ac+offwind-dc,...` 後，
 
 ---
 
-## 五、求解器：全部失敗，且**不是時間不夠**
+## 五、求解器
+
+> ⚠️ **重要但書：下表所有 30 節點的嘗試，除了最後兩列，都是在需求 2.25 倍的狀態下跑的。**
+> 那些「卡住」的結論**不能當成純粹的求解器極限**，必須在校準後的需求下重測才算數。
+> 20 / 30 節點的可解性目前是未知數，不是已知的失敗。
 
 所有嘗試（30 節點 / 3H / 無 CCL）：
 
@@ -234,12 +287,25 @@ results/KR2036_opus/
 
 ---
 
-## 七、明天要決定的事
+## 七、目前的執行計畫（已排定）
 
-1. **`objective_constant` 對照實驗的結果** —— 若證實是元兇，需要想辦法讓 PyPSA 不把常數塞進 LP
-   （或接受把非擴建 capital_cost 歸零、事後再手動加回總成本）
-2. **CCL 五個一起為何 infeasible** —— 需要 IIS，實務上要有 Gurobi/CPLEX 學術授權
-3. **Gurobi 學術授權** —— 這會一次解決求解器和 IIS 兩個問題。目前只有 pip 試用授權（2000 變數上限）
-4. **`operational_reserve` 要不要放回去** —— 目前為收斂關掉了，但你 config 註解說論文有開
-5. **兩處過時的 `# >>> KR` 註解**（co2.limit、scale）
-6. **`wind` / `waste` / `biogas` 標籤映射** 要不要補
+1. **10 節點 / 3H / 無 CCL / reserve off / IPM 全年** —— 執行中（00:21 啟動，timeout 10h）
+   建立基準線，記錄 Iter 數與時間
+2. **10 節點 / 3H / + CCL** —— 已串成自動鏈（`chain_after_baseline.sh`），基準線一結束就接著跑
+   預期 CCL 反而幫助收斂：nuclear/CCGT/biomass 被 min=max 釘死、solar/wind 有上下限，
+   自由度大減，IPM 的 gap 通常收得更快
+3. 兩者跑完都自動做四項檢查（碳排是否貼在 1.499e8 / load shedding 總量 /
+   各 carrier p_nom_opt 對照官方 2036 容量表 / 棄電率，論文是 2.9%）並存檔
+
+### 已調整
+
+- `ipm_optimality_tolerance: 1e-6 → 1e-4`。容量規劃問題相對 gap 到 1e-4 即足夠
+  （總成本 1.6e10 上約 1.6e6 EUR 的誤差），照每步 ×0.85 的速率可省約 1/3 時間
+
+### 仍待決定
+
+1. **20 / 30 節點的真實極限** —— 必須在校準後需求下重測（見第五節但書）
+2. **Gurobi 學術授權** —— 會一次解決求解器與 IIS 兩個問題。目前只有 pip 試用授權（2000 變數上限）
+3. **`operational_reserve` 要不要放回去** —— 目前為收斂關掉了，但你 config 註解說論文有開
+4. **兩處過時的 `# >>> KR` 註解**（co2.limit、scale）
+5. **`wind` / `waste` / `biogas` 標籤映射** 要不要補
