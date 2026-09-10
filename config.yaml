@@ -638,11 +638,11 @@ plotting:
       ocean: white
       land: whitesmoke
 
-  costs_max: 800
-  costs_threshold: 1
-  energy_max: 15000.
-  energy_min: -10000.
-  energy_threshold: 50.
+  costs_max: 80              # >>> KR PyPSA-Eur 預設 800 是歐洲尺度，韓國總成本約 55 十億歐元
+  costs_threshold: 0.5
+  energy_max: 800            # >>> KR PyPSA-Eur 預設 15000 是歐洲尺度，韓國發電約 700 TWh
+  energy_min: -50
+  energy_threshold: 5
 
   vre_techs: ["onwind", "offwind-ac", "offwind-dc", "solar", "ror"]
   conv_techs: ["OCGT", "CCGT", "nuclear", "Nuclear", "coal", "oil"]
