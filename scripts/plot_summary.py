@@ -102,13 +102,19 @@ def plot_costs(infn, snmk, fn=None):
     fig_costs.set_size_inches((12, 8))
 
     if new_index_costs.empty:
-        logger.error(
-            f"No costs data to plot for country {snmk.wildcards.country}, no valid plot is generated"
+        # An empty result here almost always means the input costs.csv itself
+        # had no data rows (e.g. make_summary was run for a country wildcard
+        # that matched no bus, such as a mistyped "_all" instead of "all"),
+        # not that costs_threshold filtered out real data. Silently writing
+        # an empty output file used to hide that mistake behind a "finished"
+        # snakemake run, so fail loudly instead.
+        raise ValueError(
+            f"No costs data to plot for country {snmk.wildcards.country}: "
+            f"input costs dataframe is empty after grouping/threshold filtering "
+            f"(costs_threshold={snmk.config['plotting']['costs_threshold']}). "
+            "Check that the input summaries/ directory actually contains cost "
+            "rows for this country before re-running."
         )
-        # create empty file to avoid issues with snakemake
-        with open(fn, "w") as fp:
-            pass
-        return
 
     df.loc[new_index_costs, new_columns].T.plot(
         kind="bar",
@@ -174,13 +180,17 @@ def plot_energy(infn, snmk, fn=None):
     fig_energy.set_size_inches((12, 8))
 
     if new_index_energy.empty:
-        logger.error(
-            f"No energy data to plot for country {snmk.wildcards.country}, no valid plot is generated"
+        # See the matching comment in plot_costs: an empty result here means
+        # the input energy.csv had no data rows, not that energy_threshold
+        # filtered out real data. Fail loudly instead of writing an empty
+        # file that makes snakemake report success.
+        raise ValueError(
+            f"No energy data to plot for country {snmk.wildcards.country}: "
+            f"input energy dataframe is empty after grouping/threshold filtering "
+            f"(energy_threshold={snmk.config['plotting']['energy_threshold']}). "
+            "Check that the input summaries/ directory actually contains energy "
+            "rows for this country before re-running."
         )
-        # create empty file to avoid issues with snakemake
-        with open(fn, "w") as fp:
-            pass
-        return
 
     df.loc[new_index_energy, new_columns].T.plot(
         kind="bar",

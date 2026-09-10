@@ -1,0 +1,11 @@
+simpl,
+clusters,10
+ll,copt
+opts,Co2L-CCL-3H
+electricity,
+heat,
+space heat,
+urban heat,
+space urban heat,
+gas,
+H2,

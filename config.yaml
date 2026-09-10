@@ -632,8 +632,8 @@ plotting:
     figsize: [7, 7]
     boundaries: [124., 132., 33., 39.]   # >>> KR 韓國經緯度範圍
     p_nom:
-      bus_size_factor: 5.e+4
-      linewidth_factor: 3.e+3
+      bus_size_factor: 2.e+6
+      linewidth_factor: 1.e+4
     color_geomap:
       ocean: white
       land: whitesmoke

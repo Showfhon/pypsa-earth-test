@@ -1,0 +1,18 @@
+simpl,,
+clusters,,10
+ll,,copt
+opts,,Co2L-3H
+generators,CCGT,44371.65416217794
+generators,biomass,11347.875929128704
+generators,coal,31228.364641307868
+generators,load shedding,129810.18448036391
+generators,nuclear,31161.000009659612
+generators,offwind-ac,1204.33763302205
+generators,offwind-dc,0.6974102254527943
+generators,oil,770.5652270216489
+generators,onwind,2980.1034551757953
+generators,ror,194.0
+generators,solar,115949.26996663387
+lines,lines,194423.225240504
+storage_units,battery,6.859966307504745
+storage_units,hydro+PHS,6388.784754359067

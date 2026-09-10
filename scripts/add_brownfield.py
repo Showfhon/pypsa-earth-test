@@ -3,8 +3,11 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
+#
+(把上一個規劃年解出來的網路結果，當作既有資產基礎，算出下一年的)
 Prepares brownfield data from previous planning horizon.
 
+(該腳本會用到config.yaml的哪些欄位)
 Relevant Settings
 -----------------
 
@@ -39,8 +42,9 @@ Relevant Settings
     electricity:
         renewable_carriers:
 ```
-Inputs
+Inputs (需要讀取的檔案) 
 ------
+RDIR: Run Directory, 也就是本次執行結果要存放的子目錄路徑
 - ``resources/{RDIR}/bus_regions/busmap_elec_s{simpl}.csv``: Busmap after simplifying the network
 - ``resources/{RDIR}/bus_regions/busmap_elec_s{simpl}_{clusters}.csv``: Busmap after clustering the network
 - ``{RESDIR}/prenetworks/elec_s{simpl}_{clusters}_ec_l{ll}_{opts}_{sopts}_{planning_horizons}_{discountrate}_export.nc``: prenetwork file obtained prior to solving
@@ -61,8 +65,8 @@ To prepare network for brownfield expansion
 
 import logging
 
-import numpy as np
-import pandas as pd
+import numpy as np #數值運算與表格操作, 因為用到大量.index[...]
+import pandas as pd #數值運算與表格操作, 因為用到大量.index[...
 import pypsa
 import xarray as xr
 from _helpers import read_csv_nafix, sanitize_carriers, sanitize_locations

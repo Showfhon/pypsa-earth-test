@@ -1,0 +1,16 @@
+simpl,
+clusters,10
+ll,copt
+opts,Co2L-3H
+carrier,
+CCGT,-inf
+biomass,-inf
+coal,-inf
+load shedding,-inf
+nuclear,-inf
+offwind-ac,1.481
+offwind-dc,18.597
+oil,-inf
+onwind,1.693
+ror,1.134
+solar,0.728

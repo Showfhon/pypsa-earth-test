@@ -98,7 +98,7 @@ def set_plot_style():
     plt.style.use(
         [
             "classic",
-            "seaborn-white",
+            "seaborn-v0_8-white",
             {
                 "axes.grid": False,
                 "grid.linestyle": "--",
@@ -117,6 +117,13 @@ def set_plot_style():
 def plot_map(n, ax=None, attribute="p_nom", opts={}):
     if ax is None:
         ax = plt.gca()
+
+    # Drop load shedding generators: they carry huge p_nom (e.g. 129 GW) as a
+    # slack/fallback and would otherwise dominate the bus pie sizes, drawn as
+    # oversized white circles unrelated to the actual generation mix.
+    load_shedding_gens = n.generators.index[n.generators.carrier == "load shedding"]
+    if len(load_shedding_gens):
+        n.mremove("Generator", load_shedding_gens)
 
     # DATA
     line_colors = {
@@ -174,7 +181,7 @@ def plot_map(n, ax=None, attribute="p_nom", opts={}):
         bus_sizes=0,
         # boundaries=map_boundaries,
         color_geomap=True,
-        geomap=False,
+        geomap=True,
         ax=ax,
     )
     ax.set_aspect("equal")
