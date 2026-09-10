@@ -85,3 +85,7 @@ resources/
 results/
 networks/
 data/*.nc
+
+# Local tooling, not project deliverables
+google-cloud-sdk/
+google-cloud-cli-linux-x86_64.tar.gz
