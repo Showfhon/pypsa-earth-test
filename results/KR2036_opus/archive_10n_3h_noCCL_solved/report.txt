@@ -20,11 +20,12 @@ offwind-dc              0.7       0.0     0.0  0.000
 總發電 666.1 TWh | 總需求 667.3 TWh
 
 --- 儲能 (StorageUnit) ---
-         p_nom_opt   p_nom
-carrier                   
-PHS         5308.2  5308.2
-battery        6.9     0.0
-hydro       1080.6  1080.6
+         p_nom_opt    p_nom  放電_TWh
+carrier                            
+PHS        5308.22  5308.22    0.03
+battery       6.86     0.00    0.02
+hydro      1080.56  1080.56    1.21
+battery p_nom_opt 6.9 MW（論文 30,000 MW）| ESS 放電合計 1.27 TWh
 
 --- VRE 棄電 ---
    carrier  可發_TWh  實發_TWh  棄電_TWh    棄電率
@@ -43,6 +44,6 @@ CO2Limit          primary_energy  149900000.0 -26.895312
 影子價格 -26.90 EUR/tCO2（mu != 0 代表碳約束有綁定）
 
 --- 輸電 ---
-AC 線路 s_nom_opt 合計 194.4 GW（原 191.5 GW）
+AC 線路 s_nom_opt 合計 194.4 GW（原 191.5 GW，擴建 +1.55%；論文 +32%）
 
 卸載量 0.00 TWh（佔需求 0.00%）

@@ -27,9 +27,14 @@ print(gen.sort_values("p_nom_opt_MW", ascending=False).to_string())
 print(f"\n總發電 {gen['發電_TWh'].sum():.1f} TWh | 總需求 {n.loads_t.p.mul(w, axis=0).sum().sum()/1e6:.1f} TWh")
 
 if len(n.storage_units):
-    st = n.storage_units.groupby("carrier")[["p_nom_opt", "p_nom"]].sum().round(1)
+    st = n.storage_units.groupby("carrier")[["p_nom_opt", "p_nom"]].sum()
+    if len(n.storage_units_t.p_dispatch.columns):
+        dis = n.storage_units_t.p_dispatch.mul(w, axis=0).sum()
+        st["放電_TWh"] = dis.groupby(n.storage_units.carrier).sum() / 1e6
     print("\n--- 儲能 (StorageUnit) ---")
-    print(st.to_string())
+    print(st.round(2).to_string())
+    bat = n.storage_units.p_nom_opt[n.storage_units.carrier == "battery"].sum()
+    print(f"battery p_nom_opt {bat:.1f} MW（論文 30,000 MW）| ESS 放電合計 {st.get('放電_TWh', pd.Series(dtype=float)).sum():.2f} TWh")
 
 vre = ["solar", "onwind", "offwind-ac", "offwind-dc"]
 rows = []
@@ -73,7 +78,11 @@ if len(n.global_constraints):
         print(f"影子價格 {co2.mu.iloc[0]:.2f} EUR/tCO2（mu != 0 代表碳約束有綁定）")
 
 print(f"\n--- 輸電 ---")
-print(f"AC 線路 s_nom_opt 合計 {n.lines.s_nom_opt.sum()/1e3:.1f} GW（原 {n.lines.s_nom.sum()/1e3:.1f} GW）")
+exp = (n.lines.s_nom_opt.sum() / n.lines.s_nom.sum() - 1) * 100
+print(
+    f"AC 線路 s_nom_opt 合計 {n.lines.s_nom_opt.sum()/1e3:.1f} GW"
+    f"（原 {n.lines.s_nom.sum()/1e3:.1f} GW，擴建 {exp:+.2f}%；論文 +32%）"
+)
 if len(n.links):
     print(f"Link p_nom_opt 合計 {n.links.p_nom_opt.sum()/1e3:.1f} GW")
 
