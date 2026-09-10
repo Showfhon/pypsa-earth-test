@@ -1,13 +1,14 @@
 # 2026-09-09 夜間執行摘要
 
-> 最後更新 2026-09-10 00:25。基準線（10 節點/3H/無 CCL）執行中，CCL 版已排入自動鏈。
-> 但過程中找到並修正了三個實質的資料/設定錯誤，並把求解失敗的原因縮小到一個具體嫌疑。
+> 最後更新 2026-09-10 00:30。基準線（10 節點 / 3H / 無 CCL）執行中，CCL 版已排入自動鏈。
+> 尚未產出成功的 `.nc`。
 
 ## 一句話
-CCL 的「infeasible」已查明是**需求未校準**的後果，不是 CCL 的問題 —— 校準後 CCL 完全可用。
-過程中修正了**核能被設計壽命誤殺**、**biomass 標籤漏映射**、**需求量未校準（2.25 倍）** 三個問題。
-但無 CCL 版本在 30 節點 / 3H 下，IPM 與 dual simplex 都無法收斂 —— 已確認**不是時間不夠**，
-而是數值條件問題，最新嫌疑是 `objective_constant`（見第五節）。
+修正了**核能被設計壽命誤殺**、**biomass 標籤漏映射**、**需求量未校準（2.25 倍）** 三個實質錯誤。
+CCL 的「infeasible」已查明是需求未校準的後果，不是 CCL 的問題 —— **校準後 CCL 完全可用，
+而且這個現象本身是一個很好的模型合理性驗證**（見第四節）。
+求解方面：30 節點在**未校準的需求**下 IPM 與 dual simplex 都不收斂，但那些結論
+**不能當成求解器極限**（見第五節但書）；目前正在校準後的需求下從 10 節點重建基準線。
 
 ---
 
@@ -68,10 +69,12 @@ ppm 對韓國產出的標籤是 `solid biomass`，原本只映射 `bioenergy`，
 | `existing_capacities.grouping_years_power` | …2030 | 追加 2035, 2040 | **上游 bug**（見三之3） |
 | `electricity.powerplants_filter` | `(DateOut>=2036 or NaN) and (DateIn<=2036 or NaN)` | 第一組加 `or Fueltype=='Nuclear'` | 見三之1 |
 | `co2.limit` | 3.0e+8 | **1.499e+8** | 你中途指定 |
-| `scenario.opts` | [Co2L-CCL-3H] | **[Co2L-3H, Co2L-1H]** | CCL infeasible，依你指示移除 |
+| `scenario.opts` | [Co2L-CCL-3H] | **[Co2L-3H, Co2L-1H]** | 當時判定 CCL infeasible 而移除；**現已查明可放回** |
+| `scenario.clusters` | [30] | **[10]** | 重建基準線 |
 | `load_options.scale` | 1.7 | **0.7541** | 見三之2 |
-| `electricity.operational_reserve.activate` | true | **false** | 你的升級階梯第二項 |
-| `solving.solver.options` | highs-default | **highs-simplex** | 見第四節 |
+| `electricity.operational_reserve.activate` | true | **false** | 求解器升級階梯第二項 |
+| `solving.solver.options` | highs-default | highs-simplex → **改回 highs-default** | 10/20 節點用 IPM 才能與先前數據可比 |
+| `solving.solver_options.highs-default.ipm_optimality_tolerance` | 1e-6 | **1e-4** | 容量規劃 gap 到 1e-4 已足夠（1.6e10 上約 1.6e6 EUR 誤差），省約 1/3 時間 |
 
 ⚠️ 兩處 `# >>> KR` 註解因值變動而過時，我沒有動它們，你可能要改文字：
 - `co2:` 上方「依使用者指定，2036 上限 3 億噸」（現在是 1.499e+8）
