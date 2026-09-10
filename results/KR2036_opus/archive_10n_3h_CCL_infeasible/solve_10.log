@@ -1,0 +1,256 @@
+Restricted license - for non-production use only - expires 2027-11-29
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/pulp/apis/gurobi_api.py:170: UserWarning: GUROBI error: Unknown parameter '_test'.
+  warnings.warn("GUROBI error: {}.".format(e))
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:245: FutureWarning: 'scenario.demand' is deprecated, use 'demand_data.scenario' instead.
+  warn("scenario.demand", "demand_data.scenario")
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:253: FutureWarning: 'export.h2export (list)' is deprecated, use 'export.h2export (scalar)' instead.
+  warn("export.h2export (list)", "export.h2export (scalar)")
+The PyPSA meets Earth initiative also supports dedicated regional models. See the documentation at https://pypsa-earth.readthedocs.io/en/latest/user-guide/customization/basic-setup/
+Demand data folder: data/ssp2-2.6/2040/era5_2018, load path is ['data/ssp2-2.6/2040/era5_2018/Asia.nc'].
+Expected files: Asia.nc
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                count
+---------------  -------
+prepare_network        1
+solve_network          1
+total                  2
+
+Select jobs to execute...
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/stopit/__init__.py:10: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+
+[Wed Sep  9 14:56:44 2026]
+rule prepare_network:
+    input: networks/KR2036_opus/elec_s_10_ec.nc, resources/KR2036_opus/costs_2035_elec.csv
+    output: networks/KR2036_opus/elec_s_10_ec_lcopt_Co2L-CCL-3H.nc
+    log: logs/KR2036_opus/prepare_network/elec_s_10_ec_lcopt_Co2L-CCL-3H.log
+    jobid: 1
+    benchmark: benchmarks/KR2036_opus/prepare_network/elec_s_10_ec_lcopt_Co2L-CCL-3H
+    reason: Params have changed since last execution
+    wildcards: simpl=, clusters=10, ll=copt, opts=Co2L-CCL-3H
+    resources: tmpdir=/tmp, mem_mb=4000, mem_mib=3815
+
+INFO:pypsa.io:Imported network elec_s_10_ec.nc has buses, carriers, generators, lines, loads, storage_units
+N-1 security margin of lines set to 0.7
+INFO:__main__:N-1 security margin of lines set to 0.7
+Resampling the network to 3H
+INFO:__main__:Resampling the network to 3H
+Setting CO2 limit according to config value.
+INFO:__main__:Setting CO2 limit according to config value.
+INFO:pypsa.io:Exported network 'elec_s_10_ec_lcopt_Co2L-CCL-3H.nc' contains: loads, storage_units, buses, global_constraints, lines, carriers, generators
+[Wed Sep  9 14:56:50 2026]
+Finished job 1.
+1 of 2 steps (50%) done
+Select jobs to execute...
+
+[Wed Sep  9 14:56:50 2026]
+rule solve_network:
+    input: networks/KR2036_opus/elec_s_10_ec_lcopt_Co2L-CCL-3H.nc, data/agg_p_nom_minmax_KR2036_BPLE.csv
+    output: results/KR2036_opus/networks/elec_s_10_ec_lcopt_Co2L-CCL-3H.nc
+    log: logs/KR2036_opus/solve_network/elec_s_10_ec_lcopt_Co2L-CCL-3H_solver.log, logs/KR2036_opus/solve_network/elec_s_10_ec_lcopt_Co2L-CCL-3H_python.log
+    jobid: 0
+    benchmark: benchmarks/KR2036_opus/solve_network/elec_s_10_ec_lcopt_Co2L-CCL-3H
+    reason: Input files updated by another job: networks/KR2036_opus/elec_s_10_ec_lcopt_Co2L-CCL-3H.nc
+    wildcards: simpl=, clusters=10, ll=copt, opts=Co2L-CCL-3H
+    resources: tmpdir=/tmp, mem=11950
+
+Restricted license - for non-production use only - expires 2027-11-29
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/pulp/apis/gurobi_api.py:170: UserWarning: GUROBI error: Unknown parameter '_test'.
+  warnings.warn("GUROBI error: {}.".format(e))
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:245: FutureWarning: 'scenario.demand' is deprecated, use 'demand_data.scenario' instead.
+  warn("scenario.demand", "demand_data.scenario")
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:253: FutureWarning: 'export.h2export (list)' is deprecated, use 'export.h2export (scalar)' instead.
+  warn("export.h2export (list)", "export.h2export (scalar)")
+The PyPSA meets Earth initiative also supports dedicated regional models. See the documentation at https://pypsa-earth.readthedocs.io/en/latest/user-guide/customization/basic-setup/
+Demand data folder: data/ssp2-2.6/2040/era5_2018, load path is ['data/ssp2-2.6/2040/era5_2018/Asia.nc'].
+Expected files: Asia.nc
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Provided resources: mem=11950
+Select jobs to execute...
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/stopit/__init__.py:10: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+Changing to shadow directory: /home/showfhon/pypsa-earth/.snakemake/shadow/tmpymrqz42d
+INFO:pypsa.io:Imported network elec_s_10_ec_lcopt_Co2L-CCL-3H.nc has buses, carriers, generators, global_constraints, lines, loads, storage_units
+WARNING:pypsa.consistency:Encountered nan's in static data for columns ['lifetime'] of component 'StorageUnit'.
+WARNING:pypsa.consistency:Encountered nan's in static data for columns ['lifetime'] of component 'StorageUnit'.
+Adding per carrier generation capacity constraints for individual countries
+INFO:__main__:Adding per carrier generation capacity constraints for individual countries
+CCL: csv index [('KR', 'solar'), ('KR', 'onwind+offwind-ac+offwind-dc'), ('KR', 'CCGT'), ('KR', 'nuclear'), ('KR', 'biomass')]
+INFO:__main__:CCL: csv index [('KR', 'solar'), ('KR', 'onwind+offwind-ac+offwind-dc'), ('KR', 'CCGT'), ('KR', 'nuclear'), ('KR', 'biomass')]
+CCL: model groups [('KR', 'nuclear'), ('KR', 'solar'), ('KR', 'biomass'), ('KR', 'onwind+offwind-ac+offwind-dc'), ('KR', 'CCGT')]
+INFO:__main__:CCL: model groups [('KR', 'nuclear'), ('KR', 'solar'), ('KR', 'biomass'), ('KR', 'onwind+offwind-ac+offwind-dc'), ('KR', 'CCGT')]
+CCL: include_existing=True, fixed capacity per group {('KR', 'coal'): 31228.4, ('KR', 'load shedding'): 292636.7, ('KR', 'oil'): 770.6, ('KR', 'ror'): 194.0}
+INFO:__main__:CCL: include_existing=True, fixed capacity per group {('KR', 'coal'): 31228.4, ('KR', 'load shedding'): 292636.7, ('KR', 'oil'): 770.6, ('KR', 'ror'): 194.0}
+CCL: applied 5 minimum and 5 maximum constraints
+INFO:__main__:CCL: applied 5 minimum and 5 maximum constraints
+setting CHP constraints
+INFO:__main__:setting CHP constraints
+no h2 temporal constraint set
+INFO:__main__:no h2 temporal constraint set
+INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.model:Solver logs written to `logs/KR2036_opus/solve_network/elec_s_10_ec_lcopt_Co2L-CCL-3H_solver.log`.
+INFO:linopy.model:Solver options:
+ - threads: 8
+ - solver: ipm
+ - run_crossover: off
+ - small_matrix_value: 1e-6
+ - large_matrix_value: 1e9
+ - primal_feasibility_tolerance: 1e-5
+ - dual_feasibility_tolerance: 1e-5
+ - ipm_optimality_tolerance: 1e-6
+ - parallel: on
+ - random_seed: 123
+ - presolve: on
+INFO:linopy.io:Writing objective.
+Writing constraints.:   0%|[38;2;128;191;255m          [0m| 0/32 [00:00<?, ?it/s]Writing constraints.:  22%|[38;2;128;191;255m██▏       [0m| 7/32 [00:00<00:00, 44.61it/s]Writing constraints.:  38%|[38;2;128;191;255m███▊      [0m| 12/32 [00:00<00:01, 14.32it/s]Writing constraints.:  47%|[38;2;128;191;255m████▋     [0m| 15/32 [00:00<00:01, 15.85it/s]Writing constraints.:  56%|[38;2;128;191;255m█████▋    [0m| 18/32 [00:01<00:00, 16.93it/s]Writing constraints.:  66%|[38;2;128;191;255m██████▌   [0m| 21/32 [00:01<00:00, 18.00it/s]Writing constraints.:  75%|[38;2;128;191;255m███████▌  [0m| 24/32 [00:01<00:00, 18.85it/s]Writing constraints.:  84%|[38;2;128;191;255m████████▍ [0m| 27/32 [00:01<00:00, 13.53it/s]Writing constraints.:  97%|[38;2;128;191;255m█████████▋[0m| 31/32 [00:01<00:00, 15.86it/s]Writing constraints.: 100%|[38;2;128;191;255m██████████[0m| 32/32 [00:02<00:00, 14.53it/s]
+Writing continuous variables.:   0%|[38;2;128;191;255m          [0m| 0/11 [00:00<?, ?it/s]Writing continuous variables.:  73%|[38;2;128;191;255m███████▎  [0m| 8/11 [00:00<00:00, 78.07it/s]Writing continuous variables.: 100%|[38;2;128;191;255m██████████[0m| 11/11 [00:00<00:00, 73.33it/s]
+INFO:linopy.io: Writing time: 2.43s
+INFO:linopy.solvers:Log file at /home/showfhon/pypsa-earth/logs/KR2036_opus/solve_network/elec_s_10_ec_lcopt_Co2L-CCL-3H_solver.log
+Running HiGHS 1.15.1 (git hash: n/a): Copyright (c) 2026 under MIT licence terms
+Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+LP linopy-problem-gjy7cujw has 1296609 rows; 721275 cols; 3013469 nonzeros
+Coefficient ranges:
+  Matrix  [1e-04, 3e+01]
+  Cost    [3e-02, 8e+05]
+  Bound   [4e-01, 3e+10]
+  RHS     [3e-01, 1e+08]
+WARNING: Problem has some excessively large column bounds
+WARNING: Problem has some excessively large row bounds
+WARNING:    Consider scaling the    bounds by 1e-5, or setting the user_bound_scale option to -15
+Presolving model
+573046 rows, 446136 cols, 1815726 nonzeros 1s
+452437 rows, 391964 cols, 1547696 nonzeros 4s
+Dependent equations search running on 74287 equations with time limit of 1000.00s
+Dependent equations search removed 0 rows and 0 nonzeros in 0.01s (limit = 1000.00s)
+452434 rows, 391961 cols, 1547690 nonzeros 5s
+Presolve reductions: rows 452434(-844175); columns 391961(-329314); nonzeros 1547690(-1465779) 
+Solving the presolved LP
+IPX model has 452434 rows, 391963 columns and 1547692 nonzeros
+Input
+    Number of variables:                                391963
+    Number of free variables:                           24689
+    Number of constraints:                              452434
+    Number of equality constraints:                     74292
+    Number of matrix entries:                           1547692
+    Matrix range:                                       [1e-04, 3e+01]
+    RHS range:                                          [3e-01, 1e+08]
+    Objective range:                                    [3e-02, 8e+05]
+    Bounds range:                                       [3e-01, 7e+04]
+Preprocessing
+    Dualized model:                                     no
+    Number of dense columns:                            81
+    Range of scaling factors:                           [5.00e-01, 4.00e+00]
+    Scaled cost norm:                                   753784
+    Scaled bounds norm:                                 1.499e+08
+IPX version 1.0
+Interior point solve
+ Iter       primal obj         dual obj       pinf       dinf       gap      time
+   0    2.55646514e+11  -2.91704108e+12   4.14e-02   4.21e-02  2.38e+00       6.3
+   1   -2.59866748e+12  -1.01710127e+13   4.07e-02   2.97e-02  1.19e+00      13.1
+ Constructing starting basis...
+ Iter       primal obj         dual obj       pinf       dinf       gap      time
+    Start  factorization  19: nonzeros in basis =    868307                  80.0
+   2   -5.72236354e+12  -2.15771348e+13   3.22e-02   1.72e-02  1.16e+00      93.9
+   3   -4.17493035e+12  -3.28144095e+13   2.37e-02   9.82e-03  1.55e+00     109.8
+   4    8.43501054e+12  -4.30265575e+13   1.53e-02   3.88e-03  2.98e+00     167.8
+   5    1.94747881e+13  -4.76489171e+13   7.79e-03   1.50e-03  4.76e+00     203.0
+   6    2.53824331e+13  -4.73789756e+13   2.83e-03   3.82e-04  6.62e+00     223.4
+    Start  factorization  38: nonzeros in basis =    886363                 284.9
+   7    2.43843038e+13  -4.62962261e+13   1.32e-03   1.42e-04  6.45e+00     332.8
+    Start  factorization  49: nonzeros in basis =    880329                 399.5
+    Start  factorization  56: nonzeros in basis =    875909                 467.7
+    Start  factorization  64: nonzeros in basis =    871521                 534.9
+   8    2.49909334e+13  -4.48325621e+13   4.23e-04   3.80e-05  7.04e+00     557.8
+   9    2.19801625e+13  -3.51437528e+13   1.37e-04   8.38e-06  8.68e+00     571.5
+  10    1.82471167e+13  -1.97394285e+13   5.39e-05   1.99e-06  5.09e+01     582.2
+  11    1.73615170e+13  -5.58567827e+11   3.12e-05   2.95e-07  2.13e+00     641.4
+    Start  factorization  74: nonzeros in basis =    921657                 708.3
+    Start  factorization  79: nonzeros in basis =    937921                 773.4
+    Start  factorization  80: nonzeros in basis =    948729                 850.3
+    Start  factorization  82: nonzeros in basis =    957725                 954.6
+  12    2.94422605e+13   1.60708714e+13   2.12e-05   3.93e-12  5.88e-01    1004.1
+    Start  factorization  86: nonzeros in basis =    979940                1070.4
+    Start  factorization  87: nonzeros in basis =    988826                1135.3
+    Start  factorization  89: nonzeros in basis =    990618                1203.4
+  13    4.12517254e+13   4.97227794e+13   1.39e-05   7.98e-12  1.86e-01    1221.7
+    Start  factorization  92: nonzeros in basis =    998901                1302.5
+    Start  factorization  95: nonzeros in basis =   1008377                1376.4
+  14    4.49475770e+13   2.04825346e+14   1.13e-05   2.98e-11  1.28e+00    1395.3
+    Start  factorization  99: nonzeros in basis =   1008577                1455.7
+    Start  factorization 103: nonzeros in basis =   1011597                1521.8
+    Start  factorization 107: nonzeros in basis =   1019939                1593.3
+    Start  factorization 111: nonzeros in basis =   1027994                1664.3
+    Start  factorization 115: nonzeros in basis =   1036285                1735.8
+  15    5.68162427e+13   8.81970305e+14   9.79e-06   6.98e-11  1.76e+00    1763.9
+    Start  factorization 121: nonzeros in basis =   1048117                1839.6
+    Start  factorization 125: nonzeros in basis =   1057577                1917.4
+    Start  factorization 128: nonzeros in basis =   1065006                1977.7
+    Start  factorization 132: nonzeros in basis =   1074265                2053.9
+    Start  factorization 135: nonzeros in basis =   1081465                2117.5
+    Start  factorization 139: nonzeros in basis =   1090305                2187.7
+  16    1.55133766e+14   1.88582875e+15   7.95e-06   1.12e-10  1.70e+00    2196.2
+    Start  factorization 143: nonzeros in basis =   1099811                2274.6
+  17    2.27123921e+14   2.83905860e+15   7.10e-06   3.02e-10  1.70e+00    2304.9
+    Start  factorization 149: nonzeros in basis =   1114061                2368.7
+  18    2.34148765e+14   4.25827572e+15   6.80e-06   3.86e-10  1.79e+00    2422.7
+  19    2.60792823e+14   1.85687271e+16   6.57e-06   1.48e-09  1.94e+00    2483.4
+  20    2.76796304e+14   6.81495062e+16   6.48e-06   5.53e-09  1.98e+00    2529.4
+  21    3.28237025e+14   2.16751365e+17   6.25e-06   1.38e-08  1.99e+00    2560.4
+    Start  factorization 167: nonzeros in basis =   1139774                2627.0
+  22    8.51222158e+14   2.59027698e+17   6.20e-06   1.45e-08  1.99e+00    2643.9
+Summary
+    Runtime:                                            2643.89s
+    Status interior point solve:                        primal infeas
+    Status crossover:                                   not run
+WARNING: Ipx: IPM       primal infeasible
+Model name          : linopy-problem-gjy7cujw
+Model status        : Infeasible
+IPM       iterations: 22
+Objective value     :  0.0000000000e+00
+HiGHS run time      :       2644.04
+WARNING:linopy.constants:Optimization potentially failed: 
+Status: warning
+Termination condition: infeasible
+Solution: 0 primals, 0 duals
+Objective: nan
+Solver model: available
+Solver message: Infeasible
+
+Solving status 'warning' with termination condition 'infeasible'
+WARNING:__main__:Solving status 'warning' with termination condition 'infeasible'
+ERROR:_helpers:An error happened in module '/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/linopy/model.py', function 'compute_infeasibilities': Computing infeasibilities is only supported for Gurobi and Xpress solvers. Current solver model type: Highs
+Traceback (most recent call last):
+  File "/home/showfhon/pypsa-earth/.snakemake/shadow/tmpymrqz42d/.snakemake/scripts/tmp8tgx3n_0.solve_network.py", line 1293, in <module>
+    n = solve_network(
+        ^^^^^^^^^^^^^^
+  File "/home/showfhon/pypsa-earth/.snakemake/shadow/tmpymrqz42d/.snakemake/scripts/tmp8tgx3n_0.solve_network.py", line 1233, in solve_network
+    labels = n.model.compute_infeasibilities()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/linopy/model.py", line 1355, in compute_infeasibilities
+    raise NotImplementedError(
+NotImplementedError: Computing infeasibilities is only supported for Gurobi and Xpress solvers. Current solver model type: Highs
+Not cleaning up /home/showfhon/pypsa-earth/.snakemake/shadow/tmpymrqz42d/.snakemake/scripts/tmp8tgx3n_0.solve_network.py
+[Wed Sep  9 15:41:17 2026]
+Error in rule solve_network:
+    jobid: 0
+    input: networks/KR2036_opus/elec_s_10_ec_lcopt_Co2L-CCL-3H.nc, data/agg_p_nom_minmax_KR2036_BPLE.csv
+    output: results/KR2036_opus/networks/elec_s_10_ec_lcopt_Co2L-CCL-3H.nc
+    log: logs/KR2036_opus/solve_network/elec_s_10_ec_lcopt_Co2L-CCL-3H_solver.log, logs/KR2036_opus/solve_network/elec_s_10_ec_lcopt_Co2L-CCL-3H_python.log (check log file(s) for error details)
+
+RuleException:
+CalledProcessError in file /home/showfhon/pypsa-earth/Snakefile, line 1032:
+Command 'set -euo pipefail;  /home/showfhon/miniconda3/envs/pypsa-earth/bin/python3.11 /home/showfhon/pypsa-earth/.snakemake/shadow/tmpymrqz42d/.snakemake/scripts/tmp8tgx3n_0.solve_network.py' returned non-zero exit status 1.
+  File "/home/showfhon/pypsa-earth/Snakefile", line 1032, in __rule_solve_network
+  File "/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2026-09-09T145640.894624.snakemake.log

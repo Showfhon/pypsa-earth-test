@@ -1,0 +1,55 @@
+Running HiGHS 1.15.1 (git hash: n/a): Copyright (c) 2026 under MIT licence terms
+Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+LP linopy-problem-y9mq3grb has 2531951 rows; 1138931 cols; 5313824 nonzeros
+Coefficient ranges:
+  Matrix  [1e-02, 5e+01]
+  Cost    [3e-02, 8e+05]
+  Bound   [4e-01, 3e+10]
+  RHS     [3e-01, 1e+08]
+WARNING: Problem has some excessively large column bounds
+WARNING: Problem has some excessively large row bounds
+WARNING:    Consider scaling the    bounds by 1e-5, or setting the user_bound_scale option to -15
+Presolving model
+1193435 rows, 970523 cols, 3765979 nonzeros 3s
+Dependent equations search running on 221594 equations with time limit of 1000.00s
+Dependent equations search removed 0 rows and 0 nonzeros in 0.05s (limit = 1000.00s)
+1117189 rows, 888437 cols, 3785983 nonzeros 11s
+Presolve reductions: rows 1117189(-1414762); columns 888437(-250494); nonzeros 3785983(-1527841) 
+Solving the presolved LP
+IPX model has 1117189 rows, 888437 columns and 3785983 nonzeros
+Input
+    Number of variables:                                888437
+    Number of free variables:                           101951
+    Number of constraints:                              1117189
+    Number of equality constraints:                     221594
+    Number of matrix entries:                           3785983
+    Matrix range:                                       [1e-02, 5e+01]
+    RHS range:                                          [1e+00, 1e+08]
+    Objective range:                                    [3e-02, 8e+05]
+    Bounds range:                                       [3e-01, 3e+04]
+Preprocessing
+    Dualized model:                                     no
+    Number of dense columns:                            212
+    Range of scaling factors:                           [2.50e-01, 4.00e+00]
+    Scaled cost norm:                                   753784
+    Scaled bounds norm:                                 1.499e+08
+IPX version 1.0
+Interior point solve
+ Iter       primal obj         dual obj       pinf       dinf       gap      time
+   0    2.85149152e+11  -2.23514380e+13   2.94e-04   7.55e-02  2.05e+00      17.4
+ Constructing starting basis...
+ Iter       primal obj         dual obj       pinf       dinf       gap      time
+   1   -2.57760621e+12  -2.93406544e+13   2.48e-04   3.50e-02  1.68e+00      64.0
+   2   -2.07956708e+12  -3.65600941e+13   2.20e-04   1.86e-02  1.78e+00      90.0
+    Start  factorization   9: nonzeros in basis =   2715018                 201.4
+   3   -1.59291951e+12  -4.14765597e+13   1.76e-04   1.02e-02  1.85e+00     262.0
+    Start  factorization  11: nonzeros in basis =   2716307                 361.0
+    Start  factorization  12: nonzeros in basis =   2716740                 445.3
+   4    2.99116521e+12  -3.89071046e+13   2.01e-05   1.83e-03  2.33e+00     555.5
+    Start  factorization  13: nonzeros in basis =   2717210                 625.3
+   5    3.44756113e+12  -2.08484342e+13   3.60e-06   2.81e-04  2.79e+00     725.4
+    Start  factorization  16: nonzeros in basis =   2718884                 827.9
+    Start  factorization  18: nonzeros in basis =   2720654                 934.3
+    Start  factorization  20: nonzeros in basis =   2722406                1037.0
+    Start  factorization  22: nonzeros in basis =   2723902                1142.1
+    Start  factorization  24: nonzeros in basis =   2725536                1245.6

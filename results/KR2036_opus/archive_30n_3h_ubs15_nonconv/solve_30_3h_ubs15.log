@@ -1,0 +1,163 @@
+Restricted license - for non-production use only - expires 2027-11-29
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/pulp/apis/gurobi_api.py:170: UserWarning: GUROBI error: Unknown parameter '_test'.
+  warnings.warn("GUROBI error: {}.".format(e))
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:245: FutureWarning: 'scenario.demand' is deprecated, use 'demand_data.scenario' instead.
+  warn("scenario.demand", "demand_data.scenario")
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:253: FutureWarning: 'export.h2export (list)' is deprecated, use 'export.h2export (scalar)' instead.
+  warn("export.h2export (list)", "export.h2export (scalar)")
+The PyPSA meets Earth initiative also supports dedicated regional models. See the documentation at https://pypsa-earth.readthedocs.io/en/latest/user-guide/customization/basic-setup/
+Demand data folder: data/ssp2-2.6/2040/era5_2018, load path is ['data/ssp2-2.6/2040/era5_2018/Asia.nc'].
+Expected files: Asia.nc
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 12
+Rules claiming more threads will be scaled down.
+Provided resources: mem_mb=60000
+Job stats:
+job              count
+-------------  -------
+solve_network        1
+total                1
+
+Select jobs to execute...
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/stopit/__init__.py:10: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+
+[Wed Sep  9 18:05:34 2026]
+rule solve_network:
+    input: networks/KR2036_opus/elec_s_30_ec_lcopt_Co2L-3H.nc, data/agg_p_nom_minmax_KR2036_BPLE.csv
+    output: results/KR2036_opus/networks/elec_s_30_ec_lcopt_Co2L-3H.nc
+    log: logs/KR2036_opus/solve_network/elec_s_30_ec_lcopt_Co2L-3H_solver.log, logs/KR2036_opus/solve_network/elec_s_30_ec_lcopt_Co2L-3H_python.log
+    jobid: 0
+    benchmark: benchmarks/KR2036_opus/solve_network/elec_s_30_ec_lcopt_Co2L-3H
+    reason: Missing output files: results/KR2036_opus/networks/elec_s_30_ec_lcopt_Co2L-3H.nc
+    wildcards: simpl=, clusters=30, ll=copt, opts=Co2L-3H
+    threads: 12
+    resources: tmpdir=/tmp, mem=15850
+
+Restricted license - for non-production use only - expires 2027-11-29
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/pulp/apis/gurobi_api.py:170: UserWarning: GUROBI error: Unknown parameter '_test'.
+  warnings.warn("GUROBI error: {}.".format(e))
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:245: FutureWarning: 'scenario.demand' is deprecated, use 'demand_data.scenario' instead.
+  warn("scenario.demand", "demand_data.scenario")
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:253: FutureWarning: 'export.h2export (list)' is deprecated, use 'export.h2export (scalar)' instead.
+  warn("export.h2export (list)", "export.h2export (scalar)")
+The PyPSA meets Earth initiative also supports dedicated regional models. See the documentation at https://pypsa-earth.readthedocs.io/en/latest/user-guide/customization/basic-setup/
+Demand data folder: data/ssp2-2.6/2040/era5_2018, load path is ['data/ssp2-2.6/2040/era5_2018/Asia.nc'].
+Expected files: Asia.nc
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 12
+Rules claiming more threads will be scaled down.
+Provided resources: mem=15850
+Select jobs to execute...
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/stopit/__init__.py:10: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+Changing to shadow directory: /home/showfhon/pypsa-earth/.snakemake/shadow/tmpa4em83k7
+INFO:pypsa.io:Imported network elec_s_30_ec_lcopt_Co2L-3H.nc has buses, carriers, generators, global_constraints, lines, links, loads, storage_units
+WARNING:pypsa.consistency:Encountered nan's in static data for columns ['lifetime'] of component 'StorageUnit'.
+WARNING:pypsa.consistency:Encountered nan's in static data for columns ['lifetime'] of component 'StorageUnit'.
+setting CHP constraints
+INFO:__main__:setting CHP constraints
+no h2 temporal constraint set
+INFO:__main__:no h2 temporal constraint set
+INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.model:Solver logs written to `logs/KR2036_opus/solve_network/elec_s_30_ec_lcopt_Co2L-3H_solver.log`.
+INFO:linopy.model:Solver options:
+ - threads: 8
+ - solver: ipm
+ - run_crossover: off
+ - small_matrix_value: 1e-6
+ - large_matrix_value: 1e9
+ - primal_feasibility_tolerance: 1e-5
+ - dual_feasibility_tolerance: 1e-5
+ - ipm_optimality_tolerance: 1e-6
+ - parallel: on
+ - random_seed: 123
+ - presolve: on
+ - user_bound_scale: -15
+INFO:linopy.io:Writing objective.
+Writing constraints.:   0%|[38;2;128;191;255m          [0m| 0/35 [00:00<?, ?it/s]Writing constraints.:  26%|[38;2;128;191;255m██▌       [0m| 9/35 [00:00<00:00, 40.05it/s]Writing constraints.:  40%|[38;2;128;191;255m████      [0m| 14/35 [00:01<00:02,  7.39it/s]Writing constraints.:  51%|[38;2;128;191;255m█████▏    [0m| 18/35 [00:01<00:01,  9.72it/s]Writing constraints.:  60%|[38;2;128;191;255m██████    [0m| 21/35 [00:02<00:01, 10.03it/s]Writing constraints.:  66%|[38;2;128;191;255m██████▌   [0m| 23/35 [00:02<00:01, 10.53it/s]Writing constraints.:  71%|[38;2;128;191;255m███████▏  [0m| 25/35 [00:02<00:00, 10.71it/s]Writing constraints.:  77%|[38;2;128;191;255m███████▋  [0m| 27/35 [00:02<00:00, 11.29it/s]Writing constraints.:  83%|[38;2;128;191;255m████████▎ [0m| 29/35 [00:03<00:00,  7.55it/s]Writing constraints.:  89%|[38;2;128;191;255m████████▊ [0m| 31/35 [00:03<00:00,  6.23it/s]Writing constraints.:  94%|[38;2;128;191;255m█████████▍[0m| 33/35 [00:03<00:00,  6.58it/s]Writing constraints.:  97%|[38;2;128;191;255m█████████▋[0m| 34/35 [00:04<00:00,  3.90it/s]Writing constraints.: 100%|[38;2;128;191;255m██████████[0m| 35/35 [00:04<00:00,  7.71it/s]
+Writing continuous variables.:   0%|[38;2;128;191;255m          [0m| 0/13 [00:00<?, ?it/s]Writing continuous variables.:  38%|[38;2;128;191;255m███▊      [0m| 5/13 [00:00<00:00, 47.77it/s]Writing continuous variables.:  85%|[38;2;128;191;255m████████▍ [0m| 11/13 [00:00<00:00, 49.59it/s]Writing continuous variables.: 100%|[38;2;128;191;255m██████████[0m| 13/13 [00:00<00:00, 43.42it/s]
+INFO:linopy.io: Writing time: 4.98s
+INFO:linopy.solvers:Log file at /home/showfhon/pypsa-earth/logs/KR2036_opus/solve_network/elec_s_30_ec_lcopt_Co2L-3H_solver.log
+Running HiGHS 1.15.1 (git hash: n/a): Copyright (c) 2026 under MIT licence terms
+Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+LP linopy-problem-vxlb12hk has 3042951 rows; 1647011 cols; 7289068 nonzeros
+Assessing costs and bounds after applying user_bound_scale option value of -15
+Coefficient ranges:
+  Matrix  [1e-04, 5e+01]
+  Cost    [3e-02, 8e+05]
+  Bound   [1e-05, 9e+05]
+  RHS     [1e-05, 5e+03]
+WARNING: User-scaled problem has some excessively small column bounds
+WARNING: User-scaled problem has some excessively small row bounds
+Presolving model
+1510869 rows, 991778 cols, 4645796 nonzeros 4s
+1115799 rows, 794722 cols, 3678008 nonzeros 11s
+Dependent equations search running on 220197 equations with time limit of 1000.00s
+Dependent equations search removed 0 rows and 0 nonzeros in 0.03s (limit = 1000.00s)
+1115792 rows, 794715 cols, 3678003 nonzeros 13s
+Presolve reductions: rows 1115792(-1927159); columns 794715(-852296); nonzeros 3678003(-3611065) 
+Solving the presolved LP
+IPX model has 1115792 rows, 794715 columns and 3678003 nonzeros
+Input
+    Number of variables:                                794715
+    Number of free variables:                           100505
+    Number of constraints:                              1115792
+    Number of equality constraints:                     220197
+    Number of matrix entries:                           3678003
+    Matrix range:                                       [1e-02, 5e+01]
+    RHS range:                                          [3e-05, 5e+03]
+    Objective range:                                    [3e-02, 8e+05]
+    Bounds range:                                       [1e-05, 8e-01]
+Preprocessing
+    Dualized model:                                     no
+    Number of dense columns:                            212
+    Range of scaling factors:                           [2.50e-01, 4.00e+00]
+    Scaled cost norm:                                   753784
+    Scaled bounds norm:                                 4574.58
+IPX version 1.0
+Interior point solve
+ Iter       primal obj         dual obj       pinf       dinf       gap      time
+   0    2.52650245e+06  -6.46347037e+07   6.21e-04   4.32e-02  2.16e+00      17.5
+ Constructing starting basis...
+ Iter       primal obj         dual obj       pinf       dinf       gap      time
+    Start  factorization   4: nonzeros in basis =   2694603                 128.2
+   1   -3.42343001e+07  -1.95145631e+08   5.18e-04   2.15e-02  1.40e+00     199.5
+    Start  factorization   6: nonzeros in basis =   2706164                 267.9
+   2   -2.51062770e+07  -2.95578104e+08   4.61e-04   1.25e-02  1.69e+00     337.5
+    Finish factorization   7: fill factor =   1.22                          398.3
+   3   -3.66072079e+06  -4.04932411e+08   1.89e-04   5.97e-03  1.96e+00     495.1
+    Start  factorization  10: nonzeros in basis =   2711726                 586.8
+    Start  factorization  12: nonzeros in basis =   2711525                 687.9
+    Start  factorization  13: nonzeros in basis =   2711503                 766.2
+   4    6.05310806e+07  -4.19372658e+08   3.02e-05   7.72e-04  2.67e+00     931.3
+    Start  factorization  14: nonzeros in basis =   2717522                1019.7
+   5    6.11365486e+07  -2.85825341e+08   6.24e-06   9.26e-05  3.09e+00    1088.3
+    Start  factorization  15: nonzeros in basis =   2718498                1152.7
+    Start  factorization  16: nonzeros in basis =   2719366                1219.8
+    Start  factorization  17: nonzeros in basis =   2720110                1287.4
+    Start  factorization  18: nonzeros in basis =   2720762                1350.5
+    Start  factorization  19: nonzeros in basis =   2721442                1413.1
+    Start  factorization  20: nonzeros in basis =   2722172                1478.2
+    Start  factorization  21: nonzeros in basis =   2722862                1540.5
+    Start  factorization  22: nonzeros in basis =   2723500                1603.4
+    Start  factorization  23: nonzeros in basis =   2724122                1675.3
+Will exit after finishing currently running jobs (scheduler).
+Will exit after finishing currently running jobs (scheduler).
+Not cleaning up /home/showfhon/pypsa-earth/.snakemake/shadow/tmpa4em83k7/.snakemake/scripts/tmp7y8k0rje.solve_network.py
+[Wed Sep  9 18:34:50 2026]
+Error in rule solve_network:
+    jobid: 0
+    input: networks/KR2036_opus/elec_s_30_ec_lcopt_Co2L-3H.nc, data/agg_p_nom_minmax_KR2036_BPLE.csv
+    output: results/KR2036_opus/networks/elec_s_30_ec_lcopt_Co2L-3H.nc
+    log: logs/KR2036_opus/solve_network/elec_s_30_ec_lcopt_Co2L-3H_solver.log, logs/KR2036_opus/solve_network/elec_s_30_ec_lcopt_Co2L-3H_python.log (check log file(s) for error details)
+
+RuleException:
+CalledProcessError in file /home/showfhon/pypsa-earth/Snakefile, line 1032:
+Command 'set -euo pipefail;  /home/showfhon/miniconda3/envs/pypsa-earth/bin/python3.11 /home/showfhon/pypsa-earth/.snakemake/shadow/tmpa4em83k7/.snakemake/scripts/tmp7y8k0rje.solve_network.py' died with <Signals.SIGTERM: 15>.
+  File "/home/showfhon/pypsa-earth/Snakefile", line 1032, in __rule_solve_network
+  File "/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+Will exit after finishing currently running jobs (scheduler).
+Shutting down, this might take some time.

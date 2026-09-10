@@ -1,0 +1,48 @@
+INFO:pypsa.io:Imported network elec_s_10_ec_lcopt_Co2L-3H.nc has buses, carriers, generators, global_constraints, lines, loads, storage_units
+=== results/KR2036_opus/networks/elec_s_10_ec_lcopt_Co2L-3H.nc ===
+節點 10 | 快照 2920 | 目標函數 1.8842e+10
+
+--- 發電機 ---
+               p_nom_opt_MW  p_nom_MW  發電_TWh   容量因數
+carrier                                             
+load shedding      129810.2  129810.2     0.0  0.000
+solar              115949.3   23528.2   143.5  0.141
+CCGT                44371.7   44371.7    90.8  0.234
+coal                31228.4   31228.4   126.2  0.461
+nuclear             31161.0   31161.0   207.5  0.760
+biomass             11347.9     967.1    89.0  0.895
+onwind               2980.1    2018.7     6.0  0.230
+offwind-ac           1204.3    1204.0     2.8  0.265
+oil                   770.6     770.6     0.0  0.000
+ror                   194.0     194.0     0.3  0.177
+offwind-dc              0.7       0.0     0.0  0.000
+
+總發電 666.1 TWh | 總需求 667.3 TWh
+
+--- 儲能 (StorageUnit) ---
+         p_nom_opt   p_nom
+carrier                   
+PHS         5308.2  5308.2
+battery        6.9     0.0
+hydro       1080.6  1080.6
+
+--- VRE 棄電 ---
+   carrier  可發_TWh  實發_TWh  棄電_TWh    棄電率
+     solar   144.6   143.5    1.05  0.73%
+    onwind     6.1     6.0    0.10  1.69%
+offwind-ac     2.9     2.8    0.04  1.48%
+offwind-dc     0.0     0.0    0.00 18.60%
+VRE 合計棄電率 0.85%（論文 2.9%）| 佔總需求 0.19%
+
+--- 全域約束（碳排）---
+                            type     constant         mu
+GlobalConstraint                                        
+CO2Limit          primary_energy  149900000.0 -26.895312
+
+實際碳排 149.9 Mt | 上限 149.9 Mt | 用掉 100.0%
+影子價格 -26.90 EUR/tCO2（mu != 0 代表碳約束有綁定）
+
+--- 輸電 ---
+AC 線路 s_nom_opt 合計 194.4 GW（原 191.5 GW）
+
+卸載量 0.00 TWh（佔需求 0.00%）

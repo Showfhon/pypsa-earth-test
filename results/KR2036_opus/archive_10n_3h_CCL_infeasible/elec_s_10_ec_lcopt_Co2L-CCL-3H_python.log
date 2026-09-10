@@ -1,0 +1,47 @@
+INFO:pypsa.io:Imported network elec_s_10_ec_lcopt_Co2L-CCL-3H.nc has buses, carriers, generators, global_constraints, lines, loads, storage_units
+WARNING:pypsa.consistency:Encountered nan's in static data for columns ['lifetime'] of component 'StorageUnit'.
+WARNING:pypsa.consistency:Encountered nan's in static data for columns ['lifetime'] of component 'StorageUnit'.
+INFO:__main__:Adding per carrier generation capacity constraints for individual countries
+INFO:__main__:CCL: csv index [('KR', 'solar'), ('KR', 'onwind+offwind-ac+offwind-dc'), ('KR', 'CCGT'), ('KR', 'nuclear'), ('KR', 'biomass')]
+INFO:__main__:CCL: model groups [('KR', 'nuclear'), ('KR', 'solar'), ('KR', 'biomass'), ('KR', 'onwind+offwind-ac+offwind-dc'), ('KR', 'CCGT')]
+INFO:__main__:CCL: include_existing=True, fixed capacity per group {('KR', 'coal'): 31228.4, ('KR', 'load shedding'): 292636.7, ('KR', 'oil'): 770.6, ('KR', 'ror'): 194.0}
+INFO:__main__:CCL: applied 5 minimum and 5 maximum constraints
+INFO:__main__:setting CHP constraints
+INFO:__main__:no h2 temporal constraint set
+INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.model:Solver logs written to `logs/KR2036_opus/solve_network/elec_s_10_ec_lcopt_Co2L-CCL-3H_solver.log`.
+INFO:linopy.model:Solver options:
+ - threads: 8
+ - solver: ipm
+ - run_crossover: off
+ - small_matrix_value: 1e-6
+ - large_matrix_value: 1e9
+ - primal_feasibility_tolerance: 1e-5
+ - dual_feasibility_tolerance: 1e-5
+ - ipm_optimality_tolerance: 1e-6
+ - parallel: on
+ - random_seed: 123
+ - presolve: on
+INFO:linopy.io:Writing objective.
+INFO:linopy.io: Writing time: 2.43s
+INFO:linopy.solvers:Log file at /home/showfhon/pypsa-earth/logs/KR2036_opus/solve_network/elec_s_10_ec_lcopt_Co2L-CCL-3H_solver.log
+WARNING:linopy.constants:Optimization potentially failed: 
+Status: warning
+Termination condition: infeasible
+Solution: 0 primals, 0 duals
+Objective: nan
+Solver model: available
+Solver message: Infeasible
+
+WARNING:__main__:Solving status 'warning' with termination condition 'infeasible'
+ERROR:_helpers:An error happened in module '/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/linopy/model.py', function 'compute_infeasibilities': Computing infeasibilities is only supported for Gurobi and Xpress solvers. Current solver model type: Highs
+Traceback (most recent call last):
+  File "/home/showfhon/pypsa-earth/.snakemake/shadow/tmpymrqz42d/.snakemake/scripts/tmp8tgx3n_0.solve_network.py", line 1293, in <module>
+    n = solve_network(
+        ^^^^^^^^^^^^^^
+  File "/home/showfhon/pypsa-earth/.snakemake/shadow/tmpymrqz42d/.snakemake/scripts/tmp8tgx3n_0.solve_network.py", line 1233, in solve_network
+    labels = n.model.compute_infeasibilities()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/linopy/model.py", line 1355, in compute_infeasibilities
+    raise NotImplementedError(
+NotImplementedError: Computing infeasibilities is only supported for Gurobi and Xpress solvers. Current solver model type: Highs

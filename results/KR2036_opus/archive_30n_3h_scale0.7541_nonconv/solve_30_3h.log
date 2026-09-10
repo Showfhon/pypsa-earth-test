@@ -1,0 +1,517 @@
+Restricted license - for non-production use only - expires 2027-11-29
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/pulp/apis/gurobi_api.py:170: UserWarning: GUROBI error: Unknown parameter '_test'.
+  warnings.warn("GUROBI error: {}.".format(e))
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:245: FutureWarning: 'scenario.demand' is deprecated, use 'demand_data.scenario' instead.
+  warn("scenario.demand", "demand_data.scenario")
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:253: FutureWarning: 'export.h2export (list)' is deprecated, use 'export.h2export (scalar)' instead.
+  warn("export.h2export (list)", "export.h2export (scalar)")
+The PyPSA meets Earth initiative also supports dedicated regional models. See the documentation at https://pypsa-earth.readthedocs.io/en/latest/user-guide/customization/basic-setup/
+Demand data folder: data/ssp2-2.6/2040/era5_2018, load path is ['data/ssp2-2.6/2040/era5_2018/Asia.nc'].
+Expected files: Asia.nc
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 12
+Rules claiming more threads will be scaled down.
+Provided resources: mem_mb=60000
+Job stats:
+job                      count
+---------------------  -------
+add_electricity              1
+add_extra_components         1
+build_demand_profiles        1
+cluster_network              1
+prepare_network              1
+simplify_network             1
+solve_network                1
+total                        7
+
+Select jobs to execute...
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/stopit/__init__.py:10: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+
+[Wed Sep  9 17:25:31 2026]
+rule build_demand_profiles:
+    input: networks/KR2036_opus/base.nc, resources/KR2036_opus/bus_regions/regions_onshore.geojson, data/ssp2-2.6/2040/era5_2018/Asia.nc, resources/KR2036_opus/shapes/gadm_shapes.geojson
+    output: resources/KR2036_opus/demand_profiles.csv
+    log: logs/KR2036_opus/build_demand_profiles.log
+    jobid: 20
+    benchmark: benchmarks/KR2036_opus/build_demand_profiles
+    reason: Params have changed since last execution
+    resources: tmpdir=/tmp, mem_mb=3000, mem_mib=2862
+
+INFO:pypsa.io:Imported network base.nc has buses, lines, line_types, links, transformers
+Merging demand data from paths data/ssp2-2.6/2040/era5_2018/Asia.nc into the load data frame
+INFO:__main__:Merging demand data from paths data/ssp2-2.6/2040/era5_2018/Asia.nc into the load data frame
+Load data scaled with scaling factor 0.7541.
+INFO:__main__:Load data scaled with scaling factor 0.7541.
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/geopandas/geoseries.py:772: FutureWarning: Series.__getitem__ treating keys as positions is deprecated. In a future version, integer keys will always be treated as labels (consistent with DataFrame behavior). To access a value by position, use `ser.iloc[pos]`
+  val = getattr(super(), mtd)(*args, **kwargs)
+Demand_profiles csv file created for the corresponding snapshots.
+INFO:__main__:Demand_profiles csv file created for the corresponding snapshots.
+[Wed Sep  9 17:25:42 2026]
+Finished job 20.
+1 of 7 steps (14%) done
+Select jobs to execute...
+
+[Wed Sep  9 17:25:42 2026]
+rule add_electricity:
+    input: resources/KR2036_opus/renewable_profiles/profile_onwind.nc, resources/KR2036_opus/renewable_profiles/profile_offwind-ac.nc, resources/KR2036_opus/renewable_profiles/profile_offwind-dc.nc, resources/KR2036_opus/renewable_profiles/profile_solar.nc, resources/KR2036_opus/renewable_profiles/profile_hydro.nc, networks/KR2036_opus/base.nc, resources/KR2036_opus/costs_2035_elec.csv, resources/KR2036_opus/powerplants.csv, resources/KR2036_opus/shapes/gadm_shapes.geojson, data/hydro_capacities.csv, resources/KR2036_opus/demand_profiles.csv, data/nuclear_p_max_pu.csv
+    output: networks/KR2036_opus/elec.nc
+    log: logs/KR2036_opus/add_electricity.log
+    jobid: 5
+    benchmark: benchmarks/KR2036_opus/add_electricity
+    reason: Input files updated by another job: resources/KR2036_opus/demand_profiles.csv
+    resources: tmpdir=/tmp, mem_mb=3000, mem_mib=2862
+
+INFO:pypsa.io:Imported network base.nc has buses, lines, line_types, links, transformers
+Adding 130 existing generators with capacities [GW] 
+carrier
+CCGT       44.37
+biomass     0.97
+coal       31.23
+nuclear    31.16
+oil         0.77
+Name: p_nom, dtype: float64
+INFO:__main__:Adding 130 existing generators with capacities [GW] 
+carrier
+CCGT       44.37
+biomass     0.97
+coal       31.23
+nuclear    31.16
+oil         0.77
+Name: p_nom, dtype: float64
+Added extendable {'biomass', 'nuclear', 'CCGT'} generators.
+INFO:__main__:Added extendable {'biomass', 'nuclear', 'CCGT'} generators.
+onwind: existing from powerplants = 1.41 GW, IRENA target = 2.02 GW, gap filled = 0.61 GW (30.0% of total).
+INFO:__main__:onwind: existing from powerplants = 1.41 GW, IRENA target = 2.02 GW, gap filled = 0.61 GW (30.0% of total).
+WARNING:pypsa.io:Snapshots DatetimeIndex(['2018-12-31 00:00:00', '2018-12-31 01:00:00',
+               '2018-12-31 02:00:00', '2018-12-31 03:00:00',
+               '2018-12-31 04:00:00', '2018-12-31 05:00:00',
+               '2018-12-31 06:00:00', '2018-12-31 07:00:00',
+               '2018-12-31 08:00:00', '2018-12-31 09:00:00',
+               '2018-12-31 10:00:00', '2018-12-31 11:00:00',
+               '2018-12-31 12:00:00', '2018-12-31 13:00:00',
+               '2018-12-31 14:00:00', '2018-12-31 15:00:00',
+               '2018-12-31 16:00:00', '2018-12-31 17:00:00',
+               '2018-12-31 18:00:00', '2018-12-31 19:00:00',
+               '2018-12-31 20:00:00', '2018-12-31 21:00:00',
+               '2018-12-31 22:00:00', '2018-12-31 23:00:00'],
+              dtype='datetime64[ns]', name='snapshot', freq=None) are missing from p_max_pu of Generator. Filling with default value '1.0'
+Added connection cost of 0-47263 EUR/MW/a to offwind-dc
+INFO:__main__:Added connection cost of 0-47263 EUR/MW/a to offwind-dc
+offwind-dc: existing from powerplants = 0.00 GW, IRENA target = 0.00 GW, gap filled = 0.00 GW (0.0% of total).
+INFO:__main__:offwind-dc: existing from powerplants = 0.00 GW, IRENA target = 0.00 GW, gap filled = 0.00 GW (0.0% of total).
+WARNING:pypsa.io:Snapshots DatetimeIndex(['2018-12-31 00:00:00', '2018-12-31 01:00:00',
+               '2018-12-31 02:00:00', '2018-12-31 03:00:00',
+               '2018-12-31 04:00:00', '2018-12-31 05:00:00',
+               '2018-12-31 06:00:00', '2018-12-31 07:00:00',
+               '2018-12-31 08:00:00', '2018-12-31 09:00:00',
+               '2018-12-31 10:00:00', '2018-12-31 11:00:00',
+               '2018-12-31 12:00:00', '2018-12-31 13:00:00',
+               '2018-12-31 14:00:00', '2018-12-31 15:00:00',
+               '2018-12-31 16:00:00', '2018-12-31 17:00:00',
+               '2018-12-31 18:00:00', '2018-12-31 19:00:00',
+               '2018-12-31 20:00:00', '2018-12-31 21:00:00',
+               '2018-12-31 22:00:00', '2018-12-31 23:00:00'],
+              dtype='datetime64[ns]', name='snapshot', freq=None) are missing from p_max_pu of Generator. Filling with default value '1.0'
+Added connection cost of 0-12165 EUR/MW/a to offwind-ac
+INFO:__main__:Added connection cost of 0-12165 EUR/MW/a to offwind-ac
+offwind-ac: existing from powerplants = 1.20 GW, IRENA target = 0.15 GW, gap filled = 0.00 GW (0.0% of total).
+INFO:__main__:offwind-ac: existing from powerplants = 1.20 GW, IRENA target = 0.15 GW, gap filled = 0.00 GW (0.0% of total).
+WARNING:pypsa.io:Snapshots DatetimeIndex(['2018-12-31 00:00:00', '2018-12-31 01:00:00',
+               '2018-12-31 02:00:00', '2018-12-31 03:00:00',
+               '2018-12-31 04:00:00', '2018-12-31 05:00:00',
+               '2018-12-31 06:00:00', '2018-12-31 07:00:00',
+               '2018-12-31 08:00:00', '2018-12-31 09:00:00',
+               '2018-12-31 10:00:00', '2018-12-31 11:00:00',
+               '2018-12-31 12:00:00', '2018-12-31 13:00:00',
+               '2018-12-31 14:00:00', '2018-12-31 15:00:00',
+               '2018-12-31 16:00:00', '2018-12-31 17:00:00',
+               '2018-12-31 18:00:00', '2018-12-31 19:00:00',
+               '2018-12-31 20:00:00', '2018-12-31 21:00:00',
+               '2018-12-31 22:00:00', '2018-12-31 23:00:00'],
+              dtype='datetime64[ns]', name='snapshot', freq=None) are missing from p_max_pu of Generator. Filling with default value '1.0'
+solar: existing from powerplants = 11.94 GW, IRENA target = 23.53 GW, gap filled = 11.59 GW (49.3% of total).
+INFO:__main__:solar: existing from powerplants = 11.94 GW, IRENA target = 23.53 GW, gap filled = 11.59 GW (49.3% of total).
+WARNING:pypsa.io:Snapshots DatetimeIndex(['2018-12-31 00:00:00', '2018-12-31 01:00:00',
+               '2018-12-31 02:00:00', '2018-12-31 03:00:00',
+               '2018-12-31 04:00:00', '2018-12-31 05:00:00',
+               '2018-12-31 06:00:00', '2018-12-31 07:00:00',
+               '2018-12-31 08:00:00', '2018-12-31 09:00:00',
+               '2018-12-31 10:00:00', '2018-12-31 11:00:00',
+               '2018-12-31 12:00:00', '2018-12-31 13:00:00',
+               '2018-12-31 14:00:00', '2018-12-31 15:00:00',
+               '2018-12-31 16:00:00', '2018-12-31 17:00:00',
+               '2018-12-31 18:00:00', '2018-12-31 19:00:00',
+               '2018-12-31 20:00:00', '2018-12-31 21:00:00',
+               '2018-12-31 22:00:00', '2018-12-31 23:00:00'],
+              dtype='datetime64[ns]', name='snapshot', freq=None) are missing from p_max_pu of Generator. Filling with default value '1.0'
+/home/showfhon/pypsa-earth/.snakemake/scripts/tmpezesfnlb.add_electricity.py:992: FutureWarning: DataFrame.groupby with axis=1 is deprecated. Do `frame.T.groupby(...)` without axis instead.
+  .groupby(level=0, axis=1)
+Identified 17 hydro powerplants with unknown technology.
+Hydropower plants with energy-to-capacity ratio ≥ 1.0 are classified as 'Reservoir'. The rest are 'Run-Of-River'.
+Reservoir: 16 
+Run-Of-River: 1
+INFO:__main__:Identified 17 hydro powerplants with unknown technology.
+Hydropower plants with energy-to-capacity ratio ≥ 1.0 are classified as 'Reservoir'. The rest are 'Run-Of-River'.
+Reservoir: 16 
+Run-Of-River: 1
+WARNING:pypsa.io:Snapshots DatetimeIndex(['2018-12-31 00:00:00', '2018-12-31 01:00:00',
+               '2018-12-31 02:00:00', '2018-12-31 03:00:00',
+               '2018-12-31 04:00:00', '2018-12-31 05:00:00',
+               '2018-12-31 06:00:00', '2018-12-31 07:00:00',
+               '2018-12-31 08:00:00', '2018-12-31 09:00:00',
+               '2018-12-31 10:00:00', '2018-12-31 11:00:00',
+               '2018-12-31 12:00:00', '2018-12-31 13:00:00',
+               '2018-12-31 14:00:00', '2018-12-31 15:00:00',
+               '2018-12-31 16:00:00', '2018-12-31 17:00:00',
+               '2018-12-31 18:00:00', '2018-12-31 19:00:00',
+               '2018-12-31 20:00:00', '2018-12-31 21:00:00',
+               '2018-12-31 22:00:00', '2018-12-31 23:00:00'],
+              dtype='datetime64[ns]', name='snapshot', freq=None) are missing from p_max_pu of Generator. Filling with default value '1.0'
+Added 4 ror generators with 0.19 GW
+INFO:__main__:Added 4 ror generators with 0.19 GW
+Added 9 PHS storage units with 5.31 GW
+INFO:__main__:Added 9 PHS storage units with 5.31 GW
+Assuming max_hours=6.0 for hydro reservoirs in the countries: KR
+WARNING:__main__:Assuming max_hours=6.0 for hydro reservoirs in the countries: KR
+WARNING:pypsa.io:Snapshots DatetimeIndex(['2018-12-31 00:00:00', '2018-12-31 01:00:00',
+               '2018-12-31 02:00:00', '2018-12-31 03:00:00',
+               '2018-12-31 04:00:00', '2018-12-31 05:00:00',
+               '2018-12-31 06:00:00', '2018-12-31 07:00:00',
+               '2018-12-31 08:00:00', '2018-12-31 09:00:00',
+               '2018-12-31 10:00:00', '2018-12-31 11:00:00',
+               '2018-12-31 12:00:00', '2018-12-31 13:00:00',
+               '2018-12-31 14:00:00', '2018-12-31 15:00:00',
+               '2018-12-31 16:00:00', '2018-12-31 17:00:00',
+               '2018-12-31 18:00:00', '2018-12-31 19:00:00',
+               '2018-12-31 20:00:00', '2018-12-31 21:00:00',
+               '2018-12-31 22:00:00', '2018-12-31 23:00:00'],
+              dtype='datetime64[ns]', name='snapshot', freq=None) are missing from inflow of StorageUnit. Filling with default value '0.0'
+Added 20 hydro storage units with 1.08 GW
+INFO:__main__:Added 20 hydro storage units with 1.08 GW
+No existing batteries found in powerplants.csv.
+INFO:__main__:No existing batteries found in powerplants.csv.
+Applied static nuclear p_max_pu to 17 nuclear generator(s) (source: IAEA 2022–2024).
+INFO:__main__:Applied static nuclear p_max_pu to 17 nuclear generator(s) (source: IAEA 2022–2024).
+
+Installed capacities summary
+            Generators [GW]  StorageUnits [GW]
+carrier                                       
+biomass                0.97               0.00
+ccgt                  44.37               0.00
+coal                  31.23               0.00
+hydro                  0.00               1.08
+nuclear               31.16               0.00
+offwind-ac             1.20               0.00
+offwind-dc             0.00               0.00
+oil                    0.77               0.00
+onwind                 2.02               0.00
+phs                    0.00               5.31
+ror                    0.19               0.00
+solar                 23.53               0.00
+INFO:__main__:
+Installed capacities summary
+            Generators [GW]  StorageUnits [GW]
+carrier                                       
+biomass                0.97               0.00
+ccgt                  44.37               0.00
+coal                  31.23               0.00
+hydro                  0.00               1.08
+nuclear               31.16               0.00
+offwind-ac             1.20               0.00
+offwind-dc             0.00               0.00
+oil                    0.77               0.00
+onwind                 2.02               0.00
+phs                    0.00               5.31
+ror                    0.19               0.00
+solar                 23.53               0.00
+INFO:pypsa.io:Exported network 'elec.nc' contains: carriers, line_types, generators, links, buses, lines, loads, transformers, storage_units
+[Wed Sep  9 17:26:00 2026]
+Finished job 5.
+2 of 7 steps (29%) done
+Select jobs to execute...
+
+[Wed Sep  9 17:26:00 2026]
+rule simplify_network:
+    input: networks/KR2036_opus/elec.nc, resources/KR2036_opus/costs_2035_elec.csv, resources/KR2036_opus/bus_regions/regions_onshore.geojson, resources/KR2036_opus/bus_regions/regions_offshore.geojson
+    output: networks/KR2036_opus/elec_s.nc, resources/KR2036_opus/bus_regions/regions_onshore_elec_s.geojson, resources/KR2036_opus/bus_regions/regions_offshore_elec_s.geojson, resources/KR2036_opus/bus_regions/busmap_elec_s.csv, resources/KR2036_opus/bus_regions/connection_costs_s.csv
+    log: logs/KR2036_opus/simplify_network/elec_s.log
+    jobid: 4
+    benchmark: benchmarks/KR2036_opus/simplify_network/elec_s
+    reason: Input files updated by another job: networks/KR2036_opus/elec.nc
+    wildcards: simpl=
+    resources: tmpdir=/tmp, mem_mb=4000, mem_mib=3815
+
+INFO:pypsa.io:Imported network elec.nc has buses, carriers, generators, lines, line_types, links, loads, storage_units, transformers
+INFO:_helpers:Added year suffixes to carrier names for clustering
+Mapping all network lines onto a single 380kV layer
+INFO:__main__:Mapping all network lines onto a single 380kV layer
+Simplifying connected link components
+INFO:__main__:Simplifying connected link components
+Joining the links and DC lines convert_109_197, 739, convert_406_530 connecting the buses 196, 197, 530, 529 to simple link 739+2
+INFO:__main__:Joining the links and DC lines convert_109_197, 739, convert_406_530 connecting the buses 196, 197, 530, 529 to simple link 739+2
+Joining the links and DC lines convert_186_292, 738, convert_393_516 connecting the buses 291, 292, 516, 515 to simple link 738+2
+INFO:__main__:Joining the links and DC lines convert_186_292, 738, convert_393_516 connecting the buses 291, 292, 516, 515 to simple link 738+2
+Removing stubs
+INFO:__main__:Removing stubs
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/geopandas/array.py:411: UserWarning: Geometry is in a geographic CRS. Results from 'sjoin_nearest' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  warnings.warn(
+/home/showfhon/pypsa-earth/.snakemake/scripts/tmpo_29xnt7.simplify_network.py:955: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  .apply(lambda d: gpd.sjoin_nearest(islands_bcountry[d["country"].values[0]], d))
+Fetched 6 isolated buses into the network. Load attached to a single bus with discrepancies of 0.0E+00% and 0.0E+00% for load and generation capacity, respectively
+INFO:__main__:Fetched 6 isolated buses into the network. Load attached to a single bus with discrepancies of 0.0E+00% and 0.0E+00% for load and generation capacity, respectively
+INFO:_helpers:Restored base carrier names
+INFO:pypsa.io:Exported network 'elec_s.nc' contains: loads, generators, lines, links, storage_units, carriers, buses
+INFO:pyogrio._io:Created 342 records
+INFO:pyogrio._io:Created 89 records
+[Wed Sep  9 17:26:15 2026]
+Finished job 4.
+3 of 7 steps (43%) done
+Select jobs to execute...
+
+[Wed Sep  9 17:26:15 2026]
+rule cluster_network:
+    input: networks/KR2036_opus/elec_s.nc, resources/KR2036_opus/shapes/country_shapes.geojson, resources/KR2036_opus/bus_regions/regions_onshore_elec_s.geojson, resources/KR2036_opus/bus_regions/regions_offshore_elec_s.geojson, resources/KR2036_opus/shapes/gadm_shapes.geojson, resources/KR2036_opus/costs_2035_elec.csv
+    output: networks/KR2036_opus/elec_s_30.nc, resources/KR2036_opus/bus_regions/regions_onshore_elec_s_30.geojson, resources/KR2036_opus/bus_regions/regions_offshore_elec_s_30.geojson, resources/KR2036_opus/bus_regions/busmap_elec_s_30.csv, resources/KR2036_opus/bus_regions/linemap_elec_s_30.csv
+    log: logs/KR2036_opus/cluster_network/elec_s_30.log
+    jobid: 3
+    benchmark: benchmarks/KR2036_opus/cluster_network/elec_s_30
+    reason: Input files updated by another job: resources/KR2036_opus/bus_regions/regions_offshore_elec_s.geojson, resources/KR2036_opus/bus_regions/regions_onshore_elec_s.geojson, networks/KR2036_opus/elec_s.nc
+    wildcards: simpl=, clusters=30
+    resources: tmpdir=/tmp, mem_mb=3000, mem_mib=2862
+
+INFO:pypsa.io:Imported network elec_s.nc has buses, carriers, generators, lines, links, loads, storage_units
+INFO:_helpers:Added year suffixes to carrier names for clustering
+Keyword argument feature is only valid for algorithm `hac`. Given feature `solar+onwind-time` will be ignored.
+WARNING:__main__:Keyword argument feature is only valid for algorithm `hac`. Given feature `solar+onwind-time` will be ignored.
+Cleared zero/NaN-filled storage_units_t.p after clustering
+INFO:__main__:Cleared zero/NaN-filled storage_units_t.p after clustering
+Cleared zero/NaN-filled storage_units_t.p_dispatch after clustering
+INFO:__main__:Cleared zero/NaN-filled storage_units_t.p_dispatch after clustering
+Cleared zero/NaN-filled storage_units_t.p_store after clustering
+INFO:__main__:Cleared zero/NaN-filled storage_units_t.p_store after clustering
+Cleared zero/NaN-filled storage_units_t.q after clustering
+INFO:__main__:Cleared zero/NaN-filled storage_units_t.q after clustering
+Cleared zero/NaN-filled storage_units_t.state_of_charge after clustering
+INFO:__main__:Cleared zero/NaN-filled storage_units_t.state_of_charge after clustering
+Cleared zero/NaN-filled storage_units_t.spill after clustering
+INFO:__main__:Cleared zero/NaN-filled storage_units_t.spill after clustering
+Cleared zero/NaN-filled storage_units_t.mu_upper after clustering
+INFO:__main__:Cleared zero/NaN-filled storage_units_t.mu_upper after clustering
+Cleared zero/NaN-filled storage_units_t.mu_lower after clustering
+INFO:__main__:Cleared zero/NaN-filled storage_units_t.mu_lower after clustering
+Cleared zero/NaN-filled storage_units_t.mu_state_of_charge_set after clustering
+INFO:__main__:Cleared zero/NaN-filled storage_units_t.mu_state_of_charge_set after clustering
+Cleared zero/NaN-filled storage_units_t.mu_energy_balance after clustering
+INFO:__main__:Cleared zero/NaN-filled storage_units_t.mu_energy_balance after clustering
+INFO:_helpers:Restored base carrier names
+INFO:pypsa.io:Exported network 'elec_s_30.nc' contains: buses, lines, loads, storage_units, carriers, links, generators
+INFO:pyogrio._io:Created 30 records
+INFO:pyogrio._io:Created 16 records
+[Wed Sep  9 17:26:26 2026]
+Finished job 3.
+4 of 7 steps (57%) done
+Select jobs to execute...
+
+[Wed Sep  9 17:26:26 2026]
+rule add_extra_components:
+    input: networks/KR2036_opus/elec_s_30.nc, resources/KR2036_opus/costs_2035_elec.csv
+    output: networks/KR2036_opus/elec_s_30_ec.nc
+    log: logs/KR2036_opus/add_extra_components/elec_s_30.log
+    jobid: 2
+    benchmark: benchmarks/KR2036_opus/add_extra_components/elec_s_30_ec
+    reason: Input files updated by another job: networks/KR2036_opus/elec_s_30.nc
+    wildcards: simpl=, clusters=30
+    resources: tmpdir=/tmp, mem_mb=3000, mem_mib=2862
+
+INFO:pypsa.io:Imported network elec_s_30.nc has buses, carriers, generators, lines, links, loads, storage_units
+Add the following technologies as stores and links:
+ - 
+INFO:__main__:Add the following technologies as stores and links:
+ - 
+Add the following technologies as storage units:
+ - battery
+INFO:__main__:Add the following technologies as storage units:
+ - battery
+tech_colors for carriers ['B2B'] not defined in config.
+WARNING:add_electricity:tech_colors for carriers ['B2B'] not defined in config.
+INFO:pypsa.io:Exported network 'elec_s_30_ec.nc' contains: generators, storage_units, links, carriers, buses, lines, loads
+[Wed Sep  9 17:26:30 2026]
+Finished job 2.
+5 of 7 steps (71%) done
+Select jobs to execute...
+
+[Wed Sep  9 17:26:30 2026]
+rule prepare_network:
+    input: networks/KR2036_opus/elec_s_30_ec.nc, resources/KR2036_opus/costs_2035_elec.csv
+    output: networks/KR2036_opus/elec_s_30_ec_lcopt_Co2L-3H.nc
+    log: logs/KR2036_opus/prepare_network/elec_s_30_ec_lcopt_Co2L-3H.log
+    jobid: 1
+    benchmark: benchmarks/KR2036_opus/prepare_network/elec_s_30_ec_lcopt_Co2L-3H
+    reason: Input files updated by another job: networks/KR2036_opus/elec_s_30_ec.nc
+    wildcards: simpl=, clusters=30, ll=copt, opts=Co2L-3H
+    resources: tmpdir=/tmp, mem_mb=4000, mem_mib=3815
+
+INFO:pypsa.io:Imported network elec_s_30_ec.nc has buses, carriers, generators, lines, links, loads, storage_units
+N-1 security margin of lines set to 0.7
+INFO:__main__:N-1 security margin of lines set to 0.7
+Resampling the network to 3H
+INFO:__main__:Resampling the network to 3H
+Setting CO2 limit according to config value.
+INFO:__main__:Setting CO2 limit according to config value.
+INFO:pypsa.io:Exported network 'elec_s_30_ec_lcopt_Co2L-3H.nc' contains: generators, lines, carriers, buses, loads, storage_units, global_constraints, links
+[Wed Sep  9 17:26:35 2026]
+Finished job 1.
+6 of 7 steps (86%) done
+Select jobs to execute...
+
+[Wed Sep  9 17:26:35 2026]
+rule solve_network:
+    input: networks/KR2036_opus/elec_s_30_ec_lcopt_Co2L-3H.nc, data/agg_p_nom_minmax_KR2036_BPLE.csv
+    output: results/KR2036_opus/networks/elec_s_30_ec_lcopt_Co2L-3H.nc
+    log: logs/KR2036_opus/solve_network/elec_s_30_ec_lcopt_Co2L-3H_solver.log, logs/KR2036_opus/solve_network/elec_s_30_ec_lcopt_Co2L-3H_python.log
+    jobid: 0
+    benchmark: benchmarks/KR2036_opus/solve_network/elec_s_30_ec_lcopt_Co2L-3H
+    reason: Input files updated by another job: networks/KR2036_opus/elec_s_30_ec_lcopt_Co2L-3H.nc
+    wildcards: simpl=, clusters=30, ll=copt, opts=Co2L-3H
+    threads: 12
+    resources: tmpdir=/tmp, mem=15850
+
+Restricted license - for non-production use only - expires 2027-11-29
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/pulp/apis/gurobi_api.py:170: UserWarning: GUROBI error: Unknown parameter '_test'.
+  warnings.warn("GUROBI error: {}.".format(e))
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:245: FutureWarning: 'scenario.demand' is deprecated, use 'demand_data.scenario' instead.
+  warn("scenario.demand", "demand_data.scenario")
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:253: FutureWarning: 'export.h2export (list)' is deprecated, use 'export.h2export (scalar)' instead.
+  warn("export.h2export (list)", "export.h2export (scalar)")
+The PyPSA meets Earth initiative also supports dedicated regional models. See the documentation at https://pypsa-earth.readthedocs.io/en/latest/user-guide/customization/basic-setup/
+Demand data folder: data/ssp2-2.6/2040/era5_2018, load path is ['data/ssp2-2.6/2040/era5_2018/Asia.nc'].
+Expected files: Asia.nc
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 12
+Rules claiming more threads will be scaled down.
+Provided resources: mem=15850
+Select jobs to execute...
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/stopit/__init__.py:10: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+Changing to shadow directory: /home/showfhon/pypsa-earth/.snakemake/shadow/tmpxxizoa1z
+INFO:pypsa.io:Imported network elec_s_30_ec_lcopt_Co2L-3H.nc has buses, carriers, generators, global_constraints, lines, links, loads, storage_units
+WARNING:pypsa.consistency:Encountered nan's in static data for columns ['lifetime'] of component 'StorageUnit'.
+WARNING:pypsa.consistency:Encountered nan's in static data for columns ['lifetime'] of component 'StorageUnit'.
+setting CHP constraints
+INFO:__main__:setting CHP constraints
+no h2 temporal constraint set
+INFO:__main__:no h2 temporal constraint set
+INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.model:Solver logs written to `logs/KR2036_opus/solve_network/elec_s_30_ec_lcopt_Co2L-3H_solver.log`.
+INFO:linopy.model:Solver options:
+ - threads: 8
+ - solver: ipm
+ - run_crossover: off
+ - small_matrix_value: 1e-6
+ - large_matrix_value: 1e9
+ - primal_feasibility_tolerance: 1e-5
+ - dual_feasibility_tolerance: 1e-5
+ - ipm_optimality_tolerance: 1e-6
+ - parallel: on
+ - random_seed: 123
+ - presolve: on
+INFO:linopy.io:Writing objective.
+Writing constraints.:   0%|[38;2;128;191;255m          [0m| 0/35 [00:00<?, ?it/s]Writing constraints.:  14%|[38;2;128;191;255m█▍        [0m| 5/35 [00:00<00:00, 49.37it/s]Writing constraints.:  29%|[38;2;128;191;255m██▊       [0m| 10/35 [00:00<00:01, 20.06it/s]Writing constraints.:  37%|[38;2;128;191;255m███▋      [0m| 13/35 [00:01<00:03,  6.38it/s]Writing constraints.:  43%|[38;2;128;191;255m████▎     [0m| 15/35 [00:01<00:02,  6.84it/s]Writing constraints.:  51%|[38;2;128;191;255m█████▏    [0m| 18/35 [00:01<00:01,  8.88it/s]Writing constraints.:  57%|[38;2;128;191;255m█████▋    [0m| 20/35 [00:02<00:01,  9.05it/s]Writing constraints.:  63%|[38;2;128;191;255m██████▎   [0m| 22/35 [00:02<00:01, 10.16it/s]Writing constraints.:  69%|[38;2;128;191;255m██████▊   [0m| 24/35 [00:02<00:01, 10.06it/s]Writing constraints.:  74%|[38;2;128;191;255m███████▍  [0m| 26/35 [00:02<00:00, 11.20it/s]Writing constraints.:  80%|[38;2;128;191;255m████████  [0m| 28/35 [00:02<00:00, 10.65it/s]Writing constraints.:  86%|[38;2;128;191;255m████████▌ [0m| 30/35 [00:03<00:00,  6.28it/s]Writing constraints.:  89%|[38;2;128;191;255m████████▊ [0m| 31/35 [00:03<00:00,  5.53it/s]Writing constraints.:  94%|[38;2;128;191;255m█████████▍[0m| 33/35 [00:04<00:00,  6.00it/s]Writing constraints.:  97%|[38;2;128;191;255m█████████▋[0m| 34/35 [00:04<00:00,  3.37it/s]Writing constraints.: 100%|[38;2;128;191;255m██████████[0m| 35/35 [00:04<00:00,  7.19it/s]
+Writing continuous variables.:   0%|[38;2;128;191;255m          [0m| 0/13 [00:00<?, ?it/s]Writing continuous variables.:  38%|[38;2;128;191;255m███▊      [0m| 5/13 [00:00<00:00, 47.25it/s]Writing continuous variables.:  77%|[38;2;128;191;255m███████▋  [0m| 10/13 [00:00<00:00, 45.80it/s]Writing continuous variables.: 100%|[38;2;128;191;255m██████████[0m| 13/13 [00:00<00:00, 39.41it/s]
+INFO:linopy.io: Writing time: 5.37s
+INFO:linopy.solvers:Log file at /home/showfhon/pypsa-earth/logs/KR2036_opus/solve_network/elec_s_30_ec_lcopt_Co2L-3H_solver.log
+Running HiGHS 1.15.1 (git hash: n/a): Copyright (c) 2026 under MIT licence terms
+Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+LP linopy-problem-dewcf3tu has 3042951 rows; 1647011 cols; 7289068 nonzeros
+Coefficient ranges:
+  Matrix  [1e-04, 5e+01]
+  Cost    [3e-02, 8e+05]
+  Bound   [4e-01, 3e+10]
+  RHS     [3e-01, 1e+08]
+WARNING: Problem has some excessively large column bounds
+WARNING: Problem has some excessively large row bounds
+WARNING:    Consider scaling the    bounds by 1e-5, or setting the user_bound_scale option to -15
+Presolving model
+1510869 rows, 991778 cols, 4645796 nonzeros 4s
+1115754 rows, 794677 cols, 3677918 nonzeros 11s
+Dependent equations search running on 220148 equations with time limit of 1000.00s
+Dependent equations search removed 0 rows and 0 nonzeros in 0.03s (limit = 1000.00s)
+1115743 rows, 794666 cols, 3677905 nonzeros 14s
+Presolve reductions: rows 1115743(-1927208); columns 794666(-852345); nonzeros 3677905(-3611163) 
+Solving the presolved LP
+IPX model has 1115743 rows, 794666 columns and 3677905 nonzeros
+Input
+    Number of variables:                                794666
+    Number of free variables:                           100505
+    Number of constraints:                              1115743
+    Number of equality constraints:                     220148
+    Number of matrix entries:                           3677905
+    Matrix range:                                       [1e-02, 5e+01]
+    RHS range:                                          [1e+00, 1e+08]
+    Objective range:                                    [3e-02, 8e+05]
+    Bounds range:                                       [4e-01, 3e+04]
+Preprocessing
+    Dualized model:                                     no
+    Number of dense columns:                            212
+    Range of scaling factors:                           [2.50e-01, 4.00e+00]
+    Scaled cost norm:                                   753784
+    Scaled bounds norm:                                 1.499e+08
+IPX version 1.0
+Interior point solve
+ Iter       primal obj         dual obj       pinf       dinf       gap      time
+   0    8.27916939e+10  -2.11760664e+12   2.94e-04   4.32e-02  2.16e+00      17.9
+ Constructing starting basis...
+ Iter       primal obj         dual obj       pinf       dinf       gap      time
+    Start  factorization   4: nonzeros in basis =   2708969                 132.0
+   1   -4.39870322e+11  -6.28529869e+12   2.47e-04   2.13e-02  1.74e+00     200.2
+    Start  factorization   7: nonzeros in basis =   2708899                 314.3
+   2   -3.18201582e+11  -9.39212182e+12   2.19e-04   1.19e-02  1.87e+00     386.3
+    Start  factorization   8: nonzeros in basis =   2714677                 484.6
+   3   -1.95770607e+11  -1.21848721e+13   1.85e-04   6.15e-03  1.94e+00     562.0
+    Start  factorization  10: nonzeros in basis =   2714830                 655.4
+    Start  factorization  12: nonzeros in basis =   2714728                 776.8
+   4    9.47953761e+11  -1.33652045e+13   3.13e-05   1.42e-03  2.31e+00     870.4
+    Start  factorization  13: nonzeros in basis =   2720552                 938.9
+   5    1.16081915e+12  -9.53672715e+12   4.34e-06   2.10e-04  2.55e+00    1043.7
+    Start  factorization  16: nonzeros in basis =   2721948                1164.4
+    Finish factorization  17: fill factor =   1.26                         1225.0
+   6    7.78854370e+11  -2.88570880e+12   5.08e-07   1.73e-05  3.48e+00    1283.4
+    Start  factorization  18: nonzeros in basis =   2722362                1345.5
+   7    6.96779595e+11  -1.12060518e+12   3.85e-07   3.93e-06  8.58e+00    1401.6
+    Finish factorization  19: fill factor =   1.26                         1462.2
+    Start  factorization  21: nonzeros in basis =   2725224                1562.6
+   8    6.75824882e+11  -9.91895959e+11   8.89e-08   3.15e-06  1.06e+01    1612.5
+    Start  factorization  22: nonzeros in basis =   2726101                1690.5
+    Start  factorization  23: nonzeros in basis =   2724806                1758.6
+    Start  factorization  24: nonzeros in basis =   2724058                1822.5
+   9    6.05555813e+11  -8.93479574e+11   2.79e-08   2.68e-06  1.04e+01    1875.9
+    Start  factorization  25: nonzeros in basis =   2724830                1937.9
+    Start  factorization  26: nonzeros in basis =   2725126                2011.7
+  10    5.39491253e+11  -7.09789990e+11   7.98e-09   1.81e-06  1.47e+01    2129.5
+    Start  factorization  28: nonzeros in basis =   2726387                2195.3
+    Start  factorization  29: nonzeros in basis =   2726132                2270.2
+Will exit after finishing currently running jobs (scheduler).
+Will exit after finishing currently running jobs (scheduler).
+Will exit after finishing currently running jobs (scheduler).
+Will exit after finishing currently running jobs (scheduler).
+Shutting down, this might take some time.
+Complete log: .snakemake/log/2026-09-09T172528.535248.snakemake.log
+Not cleaning up /home/showfhon/pypsa-earth/.snakemake/shadow/tmpxxizoa1z/.snakemake/scripts/tmp2hiv1wj3.solve_network.py
+[Wed Sep  9 18:05:14 2026]
+Error in rule solve_network:
+    jobid: 0
+    input: networks/KR2036_opus/elec_s_30_ec_lcopt_Co2L-3H.nc, data/agg_p_nom_minmax_KR2036_BPLE.csv
+    output: results/KR2036_opus/networks/elec_s_30_ec_lcopt_Co2L-3H.nc
+    log: logs/KR2036_opus/solve_network/elec_s_30_ec_lcopt_Co2L-3H_solver.log, logs/KR2036_opus/solve_network/elec_s_30_ec_lcopt_Co2L-3H_python.log (check log file(s) for error details)
+
+RuleException:
+CalledProcessError in file /home/showfhon/pypsa-earth/Snakefile, line 1032:
+Command 'set -euo pipefail;  /home/showfhon/miniconda3/envs/pypsa-earth/bin/python3.11 /home/showfhon/pypsa-earth/.snakemake/shadow/tmpxxizoa1z/.snakemake/scripts/tmp2hiv1wj3.solve_network.py' died with <Signals.SIGTERM: 15>.
+  File "/home/showfhon/pypsa-earth/Snakefile", line 1032, in __rule_solve_network
+  File "/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+Will exit after finishing currently running jobs (scheduler).
+Shutting down, this might take some time.
