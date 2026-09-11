@@ -318,6 +318,54 @@ def enforce_autarky(n, only_crossborder=False):
     n.mremove("Link", links_rm)
 
 
+def apply_conventional_dynamics(n, dynamics, hours_per_snapshot=1.0):
+    """
+    Constrain conventional generators with a minimum output and ramp limits.
+
+    Parameters
+    ----------
+    n : pypsa.Network
+    dynamics : dict
+        Maps a carrier to a dict that may hold ``p_min_pu`` (per unit of
+        ``p_nom``) and ``ramp_limit_up`` / ``ramp_limit_down`` (per unit of
+        ``p_nom`` **per hour**).
+    hours_per_snapshot : float
+        Length of one snapshot in hours. Ramp rates are given per hour and are
+        scaled to the snapshot length, then clipped at 1.0 because a unit can
+        at most swing its full capacity within a single snapshot.
+
+    Notes
+    -----
+    Does nothing when ``dynamics`` is empty, so runs whose config omits
+    ``electricity: conventional_dynamics`` are unaffected.
+    """
+    if not dynamics:
+        return
+
+    for carrier, params in dynamics.items():
+        idx = n.generators.index[n.generators.carrier == carrier]
+        if idx.empty:
+            logger.warning(
+                f"conventional_dynamics: no generators with carrier '{carrier}', skipped."
+            )
+            continue
+
+        applied = {}
+        if "p_min_pu" in params:
+            value = float(params["p_min_pu"])
+            n.generators.loc[idx, "p_min_pu"] = value
+            applied["p_min_pu"] = value
+        for attr in ("ramp_limit_up", "ramp_limit_down"):
+            if attr in params:
+                value = min(float(params[attr]) * hours_per_snapshot, 1.0)
+                n.generators.loc[idx, attr] = value
+                applied[attr] = value
+
+        logger.info(
+            f"conventional_dynamics: {carrier} ({len(idx)} generators) -> {applied}"
+        )
+
+
 def set_line_nom_max(n, lines, links):
     s_max, s_min = lines.get("s_nom_max"), lines.get("s_nom_max_min")
     p_max, p_min = links.get("p_nom_max"), links.get("p_nom_max_min")
@@ -435,6 +483,15 @@ if __name__ == "__main__":
         enforce_autarky(n)
     elif "ATKc" in opts:
         enforce_autarky(n, only_crossborder=True)
+
+    # Optional: minimum output and ramp limits for conventional units. Absent
+    # from most configs, in which case this is a no-op.
+    conventional_dynamics = snakemake.params.electricity.get("conventional_dynamics")
+    if conventional_dynamics:
+        hours_per_snapshot = (
+            float(n.snapshot_weightings.objective.iloc[0]) if len(n.snapshots) else 1.0
+        )
+        apply_conventional_dynamics(n, conventional_dynamics, hours_per_snapshot)
 
     sanitize_carriers(n, snakemake.config)
     sanitize_locations(n)
