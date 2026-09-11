@@ -1,0 +1,81 @@
+Running HiGHS 1.15.1 (git hash: n/a): Copyright (c) 2026 under MIT licence terms
+Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+LP linopy-problem-5993h_na has 1220635 rows; 490595 cols; 2593917 nonzeros
+Coefficient ranges:
+  Matrix  [1e-02, 3e+01]
+  Cost    [3e-02, 8e+05]
+  Bound   [4e-01, 3e+10]
+  RHS     [3e-01, 1e+08]
+WARNING: Problem has some excessively large column bounds
+WARNING: Problem has some excessively large row bounds
+WARNING:    Consider scaling the    bounds by 1e-5, or setting the user_bound_scale option to -15
+Presolving model
+584888 rows, 408633 cols, 1794456 nonzeros 1s
+Dependent equations search running on 75738 equations with time limit of 1000.00s
+Dependent equations search removed 0 rows and 0 nonzeros in 0.01s (limit = 1000.00s)
+561341 rows, 379251 cols, 1784008 nonzeros 5s
+Presolve reductions: rows 561341(-659294); columns 379251(-111344); nonzeros 1784008(-809909) 
+Solving the presolved LP
+IPX model has 561341 rows, 379253 columns and 1784010 nonzeros
+Input
+    Number of variables:                                379253
+    Number of free variables:                           81619
+    Number of constraints:                              561341
+    Number of equality constraints:                     75743
+    Number of matrix entries:                           1784010
+    Matrix range:                                       [1e-02, 3e+01]
+    RHS range:                                          [1e+00, 1e+08]
+    Objective range:                                    [3e-02, 8e+05]
+    Bounds range:                                       [3e-01, 7e+04]
+Preprocessing
+    Dualized model:                                     no
+    Number of dense columns:                            81
+    Range of scaling factors:                           [5.00e-01, 4.00e+00]
+    Scaled cost norm:                                   753784
+    Scaled bounds norm:                                 1.499e+08
+IPX version 1.0
+Interior point solve
+ Iter       primal obj         dual obj       pinf       dinf       gap      time
+   0    5.71303644e+11  -3.88845091e+13   7.25e-02   1.26e-01  2.06e+00       8.8
+   1   -5.31064174e+13  -6.58007430e+13   6.93e-02   7.09e-02  2.14e-01      19.4
+ Constructing starting basis...
+ Iter       primal obj         dual obj       pinf       dinf       gap      time
+   2   -1.29850966e+12  -9.76372881e+13   2.97e-02   3.08e-02  1.95e+00     309.0
+   3    3.25599444e+13  -1.27427486e+14   1.78e-02   1.16e-02  3.37e+00     482.6
+   4    7.18147405e+13  -1.37529761e+14   3.73e-03   1.98e-03  6.37e+00     606.0
+    Start  factorization  15: nonzeros in basis =   1543337                 678.9
+   5    8.00464597e+13  -1.65666071e+14   2.33e-03   4.63e-04  5.74e+00     845.7
+   6    5.48690517e+13  -1.69560082e+14   1.08e-03   1.71e-04  3.91e+00     948.9
+   7    4.00823836e+13  -1.65781710e+14   3.25e-04   3.72e-05  3.28e+00    1019.7
+   8    3.41727679e+13  -1.52577274e+14   1.31e-04   2.12e-05  3.15e+00    1088.2
+   9    3.13128709e+13  -1.17967856e+14   4.16e-05   5.95e-06  3.45e+00    1168.6
+  10    4.94184080e+13  -1.19339454e+14   2.57e-05   1.32e-06  4.83e+00    1293.9
+  11    5.02481646e+13  -8.82977944e+13   1.77e-05   5.30e-07  7.28e+00    1415.6
+    Start  factorization  25: nonzeros in basis =   1543441                1481.1
+  12    5.52656017e+13  -9.66400454e+13   1.62e-05   2.50e-07  7.34e+00    1598.9
+    Start  factorization  31: nonzeros in basis =   1531763                1666.6
+  13    6.55685483e+13  -8.62945375e+13   5.25e-06   1.35e-07  1.47e+01    1783.9
+  14    5.74636792e+13  -7.24273584e+13   2.07e-06   7.74e-08  1.74e+01    1917.8
+    Start  factorization  40: nonzeros in basis =   1508406                1978.9
+  15    5.36881787e+13  -5.40359261e+13   1.52e-06   5.59e-08  6.20e+02    2088.7
+    Start  factorization  48: nonzeros in basis =   1496728                2151.9
+    Start  factorization  52: nonzeros in basis =   1496728                2228.6
+  16    4.98413599e+13   2.63696156e+14   1.16e-06   3.83e-10  1.36e+00    2323.1
+    Start  factorization  59: nonzeros in basis =   1496728                2384.6
+  17    4.88340504e+13   1.73058408e+17   1.11e-06   2.17e-07  2.00e+00    2459.3
+    Start  factorization  66: nonzeros in basis =   1479393                2523.0
+  18    4.85606462e+13   8.49265372e+20   1.11e-06   3.05e-02  2.00e+00    2548.7
+    Start  factorization  71: nonzeros in basis =   1462023                2614.2
+  19    4.85606537e+13   1.47953573e+21   1.11e-06   9.49e-02  2.00e+00    2643.3
+  20    4.85606280e+13   1.51907576e+21   1.11e-06   9.43e-02  2.00e+00    2697.9
+  21    4.85606454e+13   1.53057900e+21   1.11e-06   9.63e-02  2.00e+00    2754.1
+Summary
+    Runtime:                                            2754.11s
+    Status interior point solve:                        primal infeas
+    Status crossover:                                   not run
+WARNING: Ipx: IPM       primal infeasible
+Model name          : linopy-problem-5993h_na
+Model status        : Infeasible
+IPM       iterations: 21
+Objective value     :  0.0000000000e+00
+HiGHS run time      :       2754.17
