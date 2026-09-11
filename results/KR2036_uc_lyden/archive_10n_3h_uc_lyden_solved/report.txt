@@ -1,0 +1,71 @@
+=== results/KR2036_uc_lyden/networks/elec_s_10_ec_lcopt_Co2L-CCL-3H.nc ===
+節點 10 | 快照 2920 | 目標函數 2.0411e+10
+
+--- 發電機 ---
+               p_nom_opt_MW  p_nom_MW  發電_TWh   容量因數
+carrier                                             
+load shedding      129810.2  129810.2     0.0  0.000
+solar               72270.0   23528.2    90.4  0.143
+CCGT                64600.0   64600.0   211.7  0.374
+nuclear             31700.0   31700.0   220.6  0.794
+coal                31228.4   31228.4    82.9  0.303
+onwind              29199.7    2018.7    42.8  0.167
+biomass              1620.0    1620.0    13.7  0.965
+offwind-ac           1204.4    1204.0     2.8  0.265
+oil                   770.6     770.6     0.0  0.000
+offwind-dc            275.9       0.0     0.9  0.372
+ror                   194.0     194.0     0.3  0.177
+
+總發電 666.1 TWh | 總需求 667.3 TWh
+
+--- 儲能 (StorageUnit) ---
+         p_nom_opt    p_nom  放電_TWh
+carrier                            
+PHS        5308.22  5308.22    0.03
+battery       3.65     0.00    0.01
+hydro      1080.56  1080.56    1.21
+battery p_nom_opt 3.7 MW（論文 30,000 MW）| ESS 放電合計 1.25 TWh
+
+--- VRE 棄電 ---
+   carrier  可發_TWh  實發_TWh  棄電_TWh   棄電率
+     solar    90.6    90.4    0.12 0.13%
+    onwind    44.0    42.8    1.16 2.65%
+offwind-ac     2.9     2.8    0.07 2.34%
+offwind-dc     0.9     0.9    0.02 2.07%
+VRE 合計棄電率 1.08%（論文 2.9%）| 佔總需求 0.22%
+
+--- 全域約束（碳排）---
+                            type     constant         mu
+GlobalConstraint                                        
+CO2Limit          primary_energy  149900000.0 -27.565338
+
+實際碳排 149.9 Mt | 上限 149.9 Mt | 用掉 100.0%
+影子價格 -27.57 EUR/tCO2（mu != 0 代表碳約束有綁定）
+
+--- 輸電 ---
+AC 線路 s_nom_opt 合計 195.4 GW（原 191.5 GW，擴建 +2.06%；論文 +32%）
+
+卸載量 0.00 TWh（佔需求 0.00%）
+=== 附加指標 results/KR2036_uc_lyden/networks/elec_s_10_ec_lcopt_Co2L-CCL-3H.nc ===
+
+--- 熱機組發電量 ---
+nuclear      220.6 TWh | p_nom_opt    31,700 MW | 容量因數 0.794
+coal          82.9 TWh | p_nom_opt    31,228 MW | 容量因數 0.303
+CCGT         211.7 TWh | p_nom_opt    64,600 MW | 容量因數 0.374
+biomass       13.7 TWh | p_nom_opt     1,620 MW | 容量因數 0.964
+oil            0.0 TWh | p_nom_opt       771 MW | 容量因數 0.000
+
+--- 太陽能棄電 ---
+可發 90.6 TWh | 實發 90.4 TWh | 棄電 0.12 TWh | 棄電率 0.13%
+
+--- 儲能充放電 ---
+         p_nom_opt_MW  放電_TWh  充電_TWh  循環效率損失_TWh
+carrier                                          
+PHS          5308.225   0.031   0.041       0.010
+battery         3.653   0.012   0.013       0.001
+hydro        1080.560   1.210   0.000      -1.210
+
+--- 代表節點 marginal_price 日均曲線 ---
+節點 KR0 6（全年負載最大）
+  00h: 55.24  03h: 29.82  06h: 55.32  09h: 60.53  12h: 58.42  15h: 55.78  18h: 55.61  21h: 57.44
+最高 60.53 | 最低 29.82 | 日內價差 30.71 EUR/MWh
