@@ -1,0 +1,868 @@
+# SPDX-FileCopyrightText: PyPSA-Earth and PyPSA-Eur Authors
+# SPDX-License-Identifier: CC0-1.0
+#
+# =============================================================================
+# config_KR_opus.yaml
+# 以 PyPSA-Earth 新版 config.default.yaml 為基底，逼近
+#   Kwak et al. (2025), "PyPSA-Korea", Energy Reports 13, 5677-5691
+# 的 2036 情境。
+#
+# 前提條件（依使用者要求）：
+#   1. 無韓國電廠資料 -> 只用 powerplantmatching (custom_powerplants: false)
+#   2. 目標年 2036
+#   3. 2036 碳排上限假設 3 億噸 CO2
+#   4. 納入第10次電力供需基本計畫 (2022~2036) 的容量規劃
+#   5. 2018 年氣象 + 2018 基準負載外推
+#   6. solver 只有 HiGHS
+#
+# 所有相對於官方 default 的改動都標記 `# >>> KR`，可用 grep "KR" 快速比對。
+# 若你的 config.default.yaml 版本比這份新，請用 diff 只搬 `# >>> KR` 的行。
+# =============================================================================
+
+version: 0.9.0
+tutorial: false
+
+logging:
+  level: INFO
+  format: "%(levelname)s:%(name)s:%(message)s"
+
+results_dir: results/
+summary_dir: results/
+
+foresight: overnight            # >>> KR 論文為單一目標年 overnight 投資最佳化
+
+countries: ["KR"]               # >>> KR
+
+enable:
+  # >>> KR 假設資料已下載過；第一次跑請把前三項改成 true
+  retrieve_databundle: false
+  retrieve_databundle_sector: false
+  retrieve_cost_data: true
+  retrieve_cutout: false
+  download_osm_data: false
+  download_global_buildings: false
+  build_natura_raster: false
+  build_cutout: false
+  progress_bar: true
+
+  custom_busmap: false
+custom_rules: []
+
+run:
+  name: "KR2036_kwakboth"       # >>> KR
+  sector_name: ""
+  shared_cutouts: true
+  allow_scenario_failure: false
+
+scenario:
+  simpl: [""]
+  ll: ["copt"]                  # >>> KR 論文允許輸電線成本最佳化擴建
+  # >>> KR 論文用 120 節點 / 1H。HiGHS 無法在合理時間內解那個規模，
+  #     這是本檔唯一「明顯偏離論文」的參數。建議階梯式往上爬：
+  #     [30] -> [60] -> [120]，時間解析度 3H -> 1H。
+  clusters:
+  - 10
+  - 20
+  - 30
+  opts:                         # >>> KR Co2L=碳上限, CCL=分技術容量上下限, 3H=三小時聚合
+  - Co2L-CCL-3H
+  - Co2L-CCL-1H
+  planning_horizons:
+    # >>> KR technology-data 沒有 2036 成本年份（只有 5 年一格），
+    #     故成本年份用 2035，政策目標數字仍是 2036 的。
+    #     這個值必須和 costs.year 以及 agg_p_nom_minmax csv 的表頭一致。
+  - 2035
+  sopts:
+  - "144h"
+  demand:
+  - "AB"
+
+snapshots:
+  # >>> KR 完整 8760 小時的 2018 氣象年
+  start: "2018-01-01"
+  end: "2019-01-01"
+  inclusive: "left"
+
+crs:
+  geo_crs: EPSG:4326
+  distance_crs: EPSG:3857
+  area_crs: ESRI:54009
+
+natura:
+  natura_size: countries
+  natura_resolution: 100
+  window_size: 10000
+  buffer_size: 10000
+
+augmented_line_connection:
+  add_to_snakefile: false
+  connectivity_upgrade: 2
+  new_line_type: ["HVAC"]
+  min_expansion: 1
+  min_DC_length: 600
+
+build_shape_options:
+  gadm_layer_id: 1              # >>> KR level 1 = 17 個시도，對應論文的區域人口分配
+  simplify_tolerance: 0.01
+  simplify_gadm: true
+  minarea: 0.01
+  update_file: false
+  out_logging: true
+  year: 2020
+  nprocesses: 3
+  worldpop_method: "standard"
+  gdp_method: "standard"
+  contended_flag: "set_by_country"
+
+subregion:
+  method: false
+  apply_on: ["simplify_network", "cluster_network"]
+  define_by_gadm: false
+
+  path_custom_shapes: false
+  path_custom_offshore: false
+  tolerance: 100
+base_network:
+  min_voltage_substation_offshore: 51000
+  min_voltage_rebase_voltage: 51000
+
+load_options:
+  # >>> KR 論文用 GEGIS；GEGIS 只提供 2030/2040/2050/2100 × era5_{2011,2013,2018}，
+  #     沒有 2036，所以取 2040 再用 scale 校準回 2036 的量。
+  source: "gegis"
+  weather_year: 2018
+  prediction_year: 2040
+  # >>> KR **這個值必須實跑校準**，是全檔唯一需要迭代的參數。
+  #     做法：先跑 `snakemake -j1 resources/demand_profiles.nc`，
+  #     算 float(xr.open_dataarray(...).sum()) 得到年用電量 [MWh]，
+  #     然後 scale_new = scale_old * 目標 / 實際。
+  #     目標值二選一：
+  #       (a) 700_000_000 MWh  <- 論文 2036 dispatch 合計 (Table 3, 約 717 TWh 含棄電)
+  #       (b) 667_300_000 MWh  <- 第10次電기본 2036 發電량 667.3 TWh
+  #     另一個交叉檢查：尖峰負載應接近 118 GW（10차 전기본 목표수요）。
+  scale: 0.7541
+
+co2:
+  # >>> KR 依使用者指定，2036 上限 3 億噸
+  limit: 149900000.0
+  # >>> KR 2018 年電力部門排放實績（論文 4.2 節：269.6 Mt-CO2）
+  base: 2.696e+8
+  emission_price: 0.
+  automatic_emission:
+    enable: false
+    base_year: 1990
+  budget:
+    enable: false
+    override_co2opt: true
+    base_value: limit
+    year:
+      2020: 1.0
+      2025: 0.85
+      2030: 0.70
+      2035: 0.55
+      2040: 0.40
+      2045: 0.25
+      2050: 0.1
+  # >>> KR 注意：3.0e+8 > 2.696e+8（2018 實績），代表 Co2L 這條約束
+  #     在 2036 情境下幾乎一定「不會綁定」，最佳化會退化成純最小成本。
+  #     若要重現論文的減碳訊號，把 limit 改成 1.499e+8（論文 NDC 值）。
+
+electricity:
+  base_voltage: 380.
+  # >>> KR 韓國實際電壓等級是 154 / 345 / 765 kV。原本歐洲清單會讓程式
+  #     用「最接近的」線型（154->132, 345->380, 765->750），阻抗會失真。
+  #     這裡把韓國電壓補進來（voltages 與 lines.ac_types 的 key 必須完全一致）。
+  voltages: [132., 154., 220., 300., 345., 380., 500., 750., 765.]
+
+  agg_p_nom_limits:
+    # >>> KR 這是把「第10次電力供需基本計畫 2036 容量」灌進模型的關鍵
+    #     使用官方版：太陽光 65,700 MW、風力 34,089 MW（各 ±10%）、LNG 64,600、核能 31,700
+    #     官方未拆陸域/離岸，csv 內以論文比例 46:54 拆分，屬假設
+    #     （agg_p_nom_minmax_KR2036.csv 是逼近論文 Table 2 的版本，僅供對照）
+    file: data/agg_p_nom_minmax_KR2036_Kwak.csv
+    # >>> KR **必須是 true**。false 代表上下限只管「新建量」，
+    #     既有的 48 GW CCGT / 23 GW 太陽能會疊加上去，總量會爆掉。
+    include_existing: true
+
+  hvdc_as_lines: false          # >>> KR 濟州聯絡線用 Link 建模
+
+  operational_reserve:
+    # >>> KR 論文設定：activate true / 2% 負載 / 1% 再生
+    #     若 HiGHS 收斂困難，第一個可以關掉的就是這塊。
+    activate: false
+    epsilon_load: 0.02
+    epsilon_vres: 0.01
+    contingency: 0
+
+  max_hours:
+    # >>> KR 論文 Table 2：ESS 30,090 MW / 180,540 MWh = 正好 6 小時
+    battery: 6
+    H2: 168
+
+    li-ion: 6
+    lfp: 6
+    vanadium: 10
+    lair: 12
+    pair: 24
+    iron-air: 100
+  extendable_carriers:
+    # >>> KR 論文可擴建：solar/onwind/offwind/CCGT/biomass。
+    #     這裡額外把 nuclear 放進來，因為第10次電기본要求核能 24.7 -> 31.7 GW，
+    #     而 ppm 抓到的既有量約 28.5 GW，不設可擴建就到不了目標。
+    #     nuclear 由 CCL 的 min=max=31700 鎖死，不會亂長。
+    Generator: [solar, onwind, offwind-ac, offwind-dc, CCGT, biomass, nuclear]
+    # >>> KR 論文的 ESS 是 StorageUnit（鋰電池，6h），不是 Store
+    StorageUnit: [battery]
+    Store: []
+    Link: []
+
+  # >>> KR 三段式篩選：
+  #   (1) DateOut >= 2036 : 保留 2036 年仍在役的機組
+  #   (2) DateIn  <= 2036 : 排除 2036 之後才商轉的機組
+  #   (3) 註解那段：第10次電기본要求 2036 年前汰除 28 部老舊燃煤（38.1 -> 27.1 GW）。
+  #       ppm 的 DateOut 對韓國燃煤大多是 NaN，所以退化成用「商轉年份」近似退役。
+  #       先跑一次看 resources/powerplants.csv 的 coal 合計，再調那個年份直到 ≈27,100 MW。
+  powerplants_filter: (DateOut >= 2036 or DateOut != DateOut or Fueltype == 'Nuclear') and (DateIn <= 2036 or DateIn != DateIn)
+  # powerplants_filter: (DateOut >= 2036 or DateOut != DateOut) and (DateIn <= 2036 or DateIn != DateIn) and ~((Fueltype == 'Hard Coal') & (DateIn < 1996))
+
+  custom_powerplants:           # >>> KR 依前提 1，只用 powerplantmatching
+
+    filepaths:  # list of custom powerplant files used in "merge" and "replace" options
+    - data/custom_powerplants.csv
+    method: false  # "false" use only powerplantmatching (ppm) data, "merge" combines ppm and custom powerplants, "replace" use only custom powerplants
+
+  # If you wish to replace the data for just one country (e.g. United States), you can use the option powerplants_filter as follows:
+  # powerplants_filter: ... and (Country != 'United States')
+  # custom_powerplants:
+  #   filepaths:
+  #   - data/custom_powerplants_US.csv
+  #   method: merge
+
+  conventional_carriers: [nuclear, oil, CCGT, coal, biomass]
+  renewable_carriers: [solar, onwind, offwind-ac, offwind-dc, hydro]
+
+  estimate_renewable_capacities:
+    # >>> KR 論文用 2020/1.8；這裡改 2023/1.0，因為 2036 的既有量本來就由 CCL 下限決定，
+    #     再乘 1.8 只會讓起始點失真。
+    stats: "irena"
+    year: 2023
+    p_nom_min: 1
+    p_nom_max: false
+    technology_mapping:
+      Offshore: [offwind-ac, offwind-dc]
+      Onshore: [onwind]
+      PV: [solar]
+
+lines:
+  use_country_specific_types: false
+  ac_types:
+    # >>> KR 132/220/300/500/750 保留原值；154/345/765 為韓國電壓等級新增
+    default:
+      132.: "243-AL1/39-ST1A 20.0"
+      154.: "Al/St 240/40 2-bundle 220.0"
+      220.: "Al/St 240/40 2-bundle 220.0"
+      300.: "Al/St 240/40 3-bundle 300.0"
+      345.: "Al/St 240/40 4-bundle 380.0"
+      380.: "Al/St 240/40 4-bundle 380.0"
+      500.: "Al/St 240/40 4-bundle 380.0"
+      750.: "Al/St 560/50 4-bundle 750.0"
+      765.: "Al/St 560/50 4-bundle 750.0"
+    AU:
+      132.: "243-AL1/39-ST1A 110.0"
+      275.: "Al/St 240/40 3-bundle 300.0"
+      330.: "Al/St 240/40 4-bundle 380.0"
+      500.: "Al/St 560/50 4-bundle 750.0"
+    US:
+      69.: "US_69kV"
+      100.: "US_100kV"
+      115.: "US_115kV"
+      138.: "US_138kV"
+      161.: "US_161kV"
+      230.: "US_230kV"
+      345.: "US_345kV"
+      500.: "US_500kV"
+      765.: "US_765kV"
+  dc_types:
+    default:
+      500.: "HVDC XLPE 1000"
+  s_max_pu: 0.7                 # >>> KR 同論文
+  s_nom_max: .inf
+  s_nom_max_min: -.inf
+  length_factor: 1.25
+  under_construction: "keep"    # >>> KR 論文用 keep（新韓蔚 3/4 等在建機組計入）
+
+links:
+  p_max_pu: 1.0
+  p_nom_max: .inf
+  p_nom_max_min: -.inf
+  under_construction: "keep"    # >>> KR
+
+transformers:
+  x: 0.1
+  s_nom: 2000.
+  type: ""
+
+atlite:
+  nprocesses: 4
+  cutouts:
+    # >>> KR 2018 氣象年，解析度同論文 (0.3 deg)
+    cutout-2018-era5:
+      module: era5
+      dx: 0.3
+      dy: 0.3
+  default: cutout-2018-era5
+  # >>> 若你本機已有的 cutout 叫 korea-2018-era5，把上面兩處鍵名改掉即可
+
+renewable:
+  onwind:
+    cutout: auto
+    resource:
+      method: wind
+      turbine: Vestas_V112_3MW    # >>> KR 同論文
+    capacity_per_sqkm: 3          # >>> KR 同論文
+    copernicus:
+      grid_codes: [20, 30, 40, 60, 100, 111, 112, 113, 114, 115, 116, 121, 122, 123, 124, 125, 126]
+      distance: 1000
+      distance_grid_codes: [50]
+    natura: true
+    potential: simple
+    clip_p_max_pu: 1.e-2
+    extendable: true
+  offwind-ac:
+    cutout: auto
+    resource:
+      method: wind
+      turbine: NREL_ReferenceTurbine_5MW_offshore
+    capacity_per_sqkm: 2
+    correction_factor: 0.8855     # >>> KR 論文有開（新版 default 註解掉了）
+    copernicus:
+      grid_codes: [80, 200]
+    natura: true
+    max_depth: 50
+    max_shore_distance: 30000
+    potential: simple
+    clip_p_max_pu: 1.e-2
+    extendable: true
+  offwind-dc:
+    cutout: auto
+    resource:
+      method: wind
+      turbine: NREL_ReferenceTurbine_5MW_offshore
+    capacity_per_sqkm: 3
+    correction_factor: 0.8855     # >>> KR
+    copernicus:
+      grid_codes: [80, 200]
+    natura: true
+    max_depth: 50
+    min_shore_distance: 30000
+    potential: simple
+    clip_p_max_pu: 1.e-2
+    extendable: true
+  solar:
+    cutout: auto
+    resource:
+      method: pv
+      panel: CSi
+      orientation: latitude_optimal
+    capacity_per_sqkm: 4.6
+    correction_factor: 0.854337
+    copernicus:
+      grid_codes: [20, 30, 40, 50, 60, 90, 100]
+    natura: true
+    potential: simple
+    clip_p_max_pu: 1.e-2
+    extendable: true
+  hydro:
+    cutout: auto
+    hydrobasins_level: 6          # >>> KR 同論文
+    resource:
+      method: hydro
+      hydrobasins: data/hydrobasins/hybas_world.shp
+      flowspeed: 1.0
+    carriers: [ror, PHS, hydro]
+    PHS_max_hours: 6              # >>> KR 同論文
+    hydro_max_hours: "energy_capacity_totals_by_country"
+    hydro_max_hours_default: 6.0
+    clip_min_inflow: 1.0
+    extendable: true
+    normalization:
+      method: irena
+      year: 2023
+    multiplier: 1.1               # >>> KR 同論文
+    hydro_min_inflow_pu: 1.0
+  csp:
+    cutout: auto
+    resource:
+      method: csp
+      installation: SAM_solar_tower
+    capacity_per_sqkm: 2.392
+    copernicus:
+      grid_codes: [20, 30, 40, 60, 90]
+      distancing_codes: [50]
+      distance_to_codes: 3000
+    natura: true
+    potential: simple
+    clip_p_max_pu: 1.e-2
+    extendable: false             # >>> KR 韓國無 CSP，關掉省時間
+    csp_model: advanced
+
+costs:
+  # >>> KR 2036 沒有成本年份，取最近的 2035（要和 planning_horizons 一致）
+  year: 2035
+  technology_data_version: v0.13.2
+  discountrate: [0.071]
+  country_specific_data: ""
+  cost_scenario: "moderate"
+  financial_case: "market"
+  output_currency: "EUR"          # >>> KR 論文以 EUR 報告（1 EUR = 1412 KRW, 2023 均價）
+  default_exchange_rate: 0.7532
+  future_exchange_rate_strategy: "reference"
+  custom_future_exchange_rate: None
+  rooftop_share: 0.14
+  fill_values:
+    FOM: 0
+    VOM: 0
+    efficiency: 1
+    fuel: 0
+    investment: 0
+    lifetime: 25
+    CO2 intensity: 0
+    discount rate: 0.07
+  marginal_cost:
+    solar: 0.01
+    onwind: 0.015
+    offwind: 0.015
+    hydro: 0.
+    H2: 0.
+    electrolysis: 0.
+    fuel cell: 0.
+    battery: 0.
+    battery inverter: 0.
+  # >>> KR ==== 無法重現的部分 ====
+  #     論文 Table S1 用韓國市場的 CAPEX/OPEX/燃料價（KEEI、KEPCO、Cho 2022 等），
+  #     但那份數值沒有隨 repo 釋出，公開 repo 的 costs csv 就是 PyPSA 預設值。
+  #     如果你之後拿得到 Table S1，直接在下面覆寫即可（單位見註解）：
+  # investment:      # EUR/MW
+  #   CCGT: 830000
+  #   coal: 1300000
+  #   nuclear: 6000000
+  # FOM:             # %/year
+  #   CCGT: 3.35
+  # VOM:             # EUR/MWh
+  #   CCGT: 4.2
+  # fuel:            # EUR/MWh_th
+  #   gas: 10.1
+  # lifetime:        # years
+  #   CCGT: 25.0
+  # efficiency:      # per unit
+  #   CCGT: 0.58
+
+monte_carlo:
+  options:
+    add_to_snakefile: false
+    samples: 9
+    sampling_strategy: "chaospy"
+    seed: 42
+  uncertainties:
+    loads_t.p_set:
+      type: uniform
+      args: [0.5, 1]
+    generators_t.p_max_pu.loc[:, n.generators.carrier == "onwind"]:
+      type: lognormal
+      args: [1.5]
+    generators_t.p_max_pu.loc[:, n.generators.carrier == "solar"]:
+      type: beta
+      args: [0.5, 2]
+
+# ------------------- SECTOR OPTIONS (本情境未使用，保留供 schema 驗證) -------------------
+
+policy_config:
+  hydrogen:
+    temporal_matching: "no_temporal_matching"
+    spatial_matching: false
+    temporal_matching_carriers: [csp, solar, onwind, offwind-ac, offwind-dc, ror, hydro]
+    matching_technologies: ["H2 Electrolysis"]
+    additionality: false
+    allowed_excess: 1.0
+    is_reference: false
+    remove_h2_load: false
+    path_to_ref: ""
+    re_country_load: false
+
+demand_data:
+  update_data: true
+  base_year: 2019
+  other_industries: false
+  aluminium_year: 2019
+
+  scenario: "AB"
+fossil_reserves:
+  oil: 100
+
+export:
+  endogenous: false
+  endogenous_price: 400
+  store: true
+  store_capital_costs: "no_costs"
+  h2export: [10]
+  export_profile: "ship"
+  ship:
+    ship_capacity: 0.4
+    travel_time: 288
+    fill_time: 24
+    unload_time: 24
+
+custom_data:
+  heat_demand: false
+  industry_demand: false
+  industry_database: false
+  transport_demand: false
+  water_costs: false
+  h2_underground: false
+  add_existing: false
+  custom_sectors: false
+  gas_network: false
+  export_ports: false
+  airports: false
+
+industry:
+  reference_year: 2015
+
+existing_capacities:
+  grouping_years_power: [1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020, 2025, 2030, 2035, 2040]
+  grouping_years_heat: [1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2019]
+  threshold_capacity: 10
+  default_heating_lifetime: 20
+  conventional_carriers:
+  - lignite
+  - coal
+  - oil
+  - uranium
+
+sector:
+  enable:
+    heat: false
+    biomass: false
+    industry: false
+    shipping: false
+    aviation: false
+    land_transport: false
+    rail_transport: false
+    agriculture: false
+    residential: false
+    services: false
+
+solving:
+  options:
+    formulation: kirchhoff
+    # >>> KR 論文用 true（無限大 VOLL）。HiGHS 下建議壓低：
+    #     100 EUR/kWh = 1e5 EUR/MWh，會把目標函數係數拉到 7 個數量級，
+    #     直接害死 interior point 的數值條件。10 EUR/kWh 已經夠貴到不會被濫用。
+    load_shedding: 10
+    # >>> KR 論文用 true。noisy_costs 會在成本上疊隨機擾動來破簡併，
+    #     但在本問題的尺度下反而讓矩陣更難縮放，HiGHS 建議關掉。
+    noisy_costs: false
+    min_iterations: 1
+    max_iterations: 1
+    clip_p_max_pu: 0.01
+    skip_iterations: true         # >>> KR 同論文，單次 LOPF 不做線損迭代
+    track_iterations: false
+
+  solver:
+    name: highs                   # >>> KR 依前提 6
+    options: highs-default
+
+  solver_options:
+    highs-default:
+      # https://ergo-code.github.io/HiGHS/dev/options/definitions/
+      threads: 1
+      solver: "ipm"
+      # >>> KR **最關鍵的一行**：預設 run_crossover: "on"，
+      #     IPX 解完後要做 crossover 去建 basis，就是你之前卡在
+      #     "Constructing starting basis" 反覆 factorization 的地方。
+      #     容量擴充問題不需要 basic solution，直接關掉。
+      run_crossover: "off"
+      presolve: "on"
+      small_matrix_value: 1e-6
+      large_matrix_value: 1e9
+      primal_feasibility_tolerance: 1e-5
+      dual_feasibility_tolerance: 1e-5
+      ipm_optimality_tolerance: 0.0001
+      parallel: "on"
+      random_seed: 123
+    highs-fallback:
+      # >>> KR 若 highs-default 還是不收斂，把上面 options 改成 highs-fallback
+      threads: 8
+      solver: "ipm"
+      run_crossover: "off"
+      presolve: "on"
+      primal_feasibility_tolerance: 1e-4
+      dual_feasibility_tolerance: 1e-4
+      ipm_optimality_tolerance: 1e-4
+      parallel: "on"
+      random_seed: 123
+    highs-simplex:
+      # >>> KR 最後手段：節點數降到 10-20 時，dual simplex 有時反而穩
+      threads: 12
+      solver: "simplex"
+      simplex_strategy: 1
+      simplex_max_concurrency: 8
+      presolve: "on"
+      random_seed: 123
+    gurobi-default:
+      threads: 4
+      method: 2
+      crossover: 0
+      BarConvTol: 1.e-6
+      Seed: 123
+      AggFill: 0
+      PreDual: 0
+      GURO_PAR_BARDENSETHRESH: 200
+    cplex-default:
+      threads: 4
+      lpmethod: 4
+      solutiontype: 2
+      barrier.convergetol: 1.e-5
+      feasopt.tolerance: 1.e-6
+    cbc-default: {}
+    glpk-default: {}
+
+  mem: 60000                      # >>> KR MB；30 節點 x 3H 建議至少 60 GB
+
+plotting:
+  map:
+    figsize: [7, 7]
+    boundaries: [124., 132., 33., 39.]   # >>> KR 韓國經緯度範圍
+    p_nom:
+      bus_size_factor: 2.e+6
+      linewidth_factor: 1.e+4
+    color_geomap:
+      ocean: white
+      land: whitesmoke
+
+  costs_max: 80              # >>> KR PyPSA-Eur 預設 800 是歐洲尺度，韓國總成本約 55 十億歐元
+  costs_threshold: 0.5
+  energy_max: 800            # >>> KR PyPSA-Eur 預設 15000 是歐洲尺度，韓國發電約 700 TWh
+  energy_min: -50
+  energy_threshold: 5
+
+  vre_techs: ["onwind", "offwind-ac", "offwind-dc", "solar", "ror"]
+  conv_techs: ["OCGT", "CCGT", "nuclear", "Nuclear", "coal", "oil"]
+  storage_techs: ["hydro+PHS", "battery", "H2"]
+  renewable_storage_techs: ["PHS", "hydro"]
+  load_carriers: ["AC load"]
+  AC_carriers: ["AC line", "AC transformer"]
+  link_carriers: ["DC line", "Converter AC-DC"]
+
+  # >>> KR 以下配色/命名照論文 Fig. 6-7 的圖例，方便直接對照
+  tech_colors:
+    "onwind": "#235ebc"
+    "onshore wind": "#235ebc"
+    "offwind": "#6895dd"
+    "offwind-ac": "#6895dd"
+    "offshore wind": "#6895dd"
+    "offshore wind ac": "#6895dd"
+    "offwind-dc": "#74c6f2"
+    "offshore wind dc": "#74c6f2"
+    "hydro": "#08ad97"
+    "hydro+PHS": "#08ad97"
+    "PHS": "#08ad97"
+    "hydro reservoir": "#08ad97"
+    "hydroelectricity": "#08ad97"
+    "ror": "#4adbc8"
+    "run of river": "#4adbc8"
+    "solar": "#f9d002"
+    "solar PV": "#f9d002"
+    "solar thermal": "#ffef60"
+    "biomass": "#0c6013"
+    "solid biomass": "#06540d"
+    "biogas": "#23932d"
+    "waste": "#68896b"
+    "geothermal": "#ba91b1"
+    "OCGT": "#d35050"
+    "gas": "#d35050"
+    "natural gas": "#d35050"
+    "CCGT": "#b20101"
+    "nuclear": "#ff9000"
+    "Nuclear": "#ff9000"
+    "coal": "#707070"
+    "lignite": "#9e5a01"
+    "oil": "#262626"
+    "H2": "#ea048a"
+    "hydrogen storage": "#ea048a"
+    "battery": "#b8ea04"
+    "battery_discharge": "#b8ea04"
+    "Electric load": "#f9d002"
+    "electricity": "#f9d002"
+    "lines": "#70af1d"
+    "transmission lines": "#70af1d"
+    "AC-AC": "#70af1d"
+    "AC line": "#70af1d"
+    "links": "#8a1caf"
+    "HVDC links": "#8a1caf"
+    "DC-DC": "#8a1caf"
+    "DC link": "#8a1caf"
+    "load": "#FF0000"
+  nice_names:
+    OCGT: "Open-Cycle Gas"
+    CCGT: "Combined-Cycle Gas"
+    offwind-ac: "Offshore Wind (AC)"
+    offwind-dc: "Offshore Wind (DC)"
+    onwind: "Onshore Wind"
+    solar: "Solar"
+    PHS: "Pumped Hydro Storage"
+    hydro: "Reservoir & Dam"
+    battery: "Battery Storage"
+    H2: "Hydrogen Storage"
+    lines: "Transmission Lines"
+    ror: "Run of River"
+clustering:
+  simplify_network:
+    to_substations: false
+    algorithm: kmeans
+    feature: solar+onwind-time
+    exclude_carriers: []
+    remove_stubs: true
+    remove_stubs_across_borders: false
+    p_threshold_drop_isolated: 20
+    p_threshold_merge_isolated: 300
+    # >>> KR 論文設 0.05（新版 default 是 false）。
+    #     韓國有離島/孤立子網路，設 false 會產生完全沒有 AC 線路的節點，
+    #     造成該節點負載全部被 curtail/load-shed。這裡跟回論文設定。
+    s_threshold_fetch_isolated: 0.05
+  cluster_network:
+    algorithm: kmeans
+    feature: solar+onwind-time
+    exclude_carriers: []
+  alternative_clustering: false   # >>> KR 論文用 Voronoi（false），非 GADM
+  distribute_cluster: ["load"]
+  out_logging: true
+  aggregation_strategies:
+    generators:
+      p_nom: sum
+      p_nom_max: sum
+      p_nom_min: sum
+      p_min_pu: mean
+      p_max_pu: weighted_average
+      marginal_cost: mean
+      committable: any
+      ramp_limit_up: max
+      ramp_limit_down: max
+      efficiency: mean
+      build_year: mean
+      lifetime: mean
+    one_ports:
+      StorageUnit:
+        build_year: mean
+        lifetime: mean
+  focus_weights: false
+
+osm:
+  clean_osm_data:
+    names_by_shapes: true
+    threshold_voltage: 51000
+    tag_substation: "transmission"
+    add_line_endings: true
+    generator_name_method: OSM
+    use_custom_lines: "OSM_only"
+    path_custom_lines: false
+    use_custom_substations: "OSM_only"
+    path_custom_substations: false
+    use_custom_cables: "OSM_only"
+    path_custom_cables: false
+
+  build_osm_network:
+    group_close_buses: true
+    group_tolerance_buses: 5000
+    split_overpassing_lines: true
+    overpassing_lines_tolerance: 1
+    force_ac: false             # >>> KR 保持 false，濟州 HVDC 才會被建成 Link
+
+storage_techs:
+  # All technology abbreviations are defined in https://pypsa-earth.readthedocs.io/en/latest/user-guide/configuration/#storage-technologies
+  battery:
+    store: "battery storage"
+    bicharger: "battery inverter"
+  home battery:
+    store: "home battery storage"
+    bicharger: "home battery inverter"
+  li-ion:
+    store: "battery storage"
+    bicharger: "battery inverter"
+  lfp:
+    store: "Lithium-Ion-LFP-store"
+    bicharger: "Lithium-Ion-LFP-bicharger"
+  vanadium:
+    store: "Vanadium-Redox-Flow-store"
+    bicharger: "Vanadium-Redox-Flow-bicharger"
+  lair:
+    store: "Liquid-Air-store"
+    charger: "Liquid-Air-charger"
+    discharger: "Liquid-Air-discharger"
+  pair:
+    store: "Compressed-Air-Adiabatic-store"
+    bicharger: "Compressed-Air-Adiabatic-bicharger"
+  iron-air:
+    store: "iron-air battery"
+    charger: "iron-air battery charge"
+    discharger: "iron-air battery discharge"
+  H2:
+    store: "hydrogen storage tank type 1 including compressor"
+    charger: "electrolysis"
+    discharger: "fuel cell"
+  H2 underground:
+    store: "hydrogen storage underground"
+    charger: "electrolysis"
+    discharger: "fuel cell"
+  concrete:
+    store: "Concrete-store"
+    charger: "Concrete-charger"
+    discharger: "Concrete-discharger"
+  gravity:
+    store: "Gravity-Brick-store"
+    bicharger: "Gravity-Brick-bicharger"
+  gravitywa:
+    store: "Gravity-Water-Aboveground-store"
+    bicharger: "Gravity-Water-Aboveground-bicharger"
+  gravitywu:
+    store: "Gravity-Water-Underground-store"
+    bicharger: "Gravity-Water-Underground-bicharger"
+  salthight:
+    store: "HighT-Molten-Salt-store"
+    charger: "HighT-Molten-Salt-charger"
+    discharger: "HighT-Molten-Salt-discharger"
+  lead:
+    store: "Lead-Acid-store"
+    bicharger: "Lead-Acid-bicharger"
+  nmc:
+    store: "Lithium-Ion-NMC-store"
+    bicharger: "Lithium-Ion-NMC-bicharger"
+  saltlowt:
+    store: "LowT-Molten-Salt-store"
+    charger: "LowT-Molten-Salt-charger"
+    discharger: "LowT-Molten-Salt-discharger"
+  nizn:
+    store: "Ni-Zn-store"
+    bicharger: "Ni-Zn-bicharger"
+  phes:
+    store: "Pumped-Heat-store"
+    charger: "Pumped-Heat-charger"
+    discharger: "Pumped-Heat-discharger"
+  phs: # Current PHS data only has MW cost, not it's storage cost
+    store: "Pumped-Storage-Hydro-store"
+    bicharger: "Pumped-Storage-Hydro-bicharger"
+  sand:
+    store: "Sand-store"
+    charger: "Sand-charger"
+    discharger: "Sand-discharger"
+  znair:
+    store: "Zn-Air-store"
+    bicharger: "Zn-Air-bicharger"
+  znbrflow:
+    store: "Zn-Br-Flow-store"
+    bicharger: "Zn-Br-Flow-bicharger"
+  znbr:
+    store: "Zn-Br-Nonflow-store"
+    bicharger: "Zn-Br-Nonflow-bicharger"
+
+# ------------------- Costs & emissions -------------------
