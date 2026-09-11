@@ -49,7 +49,7 @@ enable:
 custom_rules: []
 
 run:
-  name: "KR2036_opus"           # >>> KR
+  name: "KR2036_kwakboth"       # >>> KR
   sector_name: ""
   shared_cutouts: true
   allow_scenario_failure: false
@@ -179,7 +179,7 @@ electricity:
     #     使用官方版：太陽光 65,700 MW、風力 34,089 MW（各 ±10%）、LNG 64,600、核能 31,700
     #     官方未拆陸域/離岸，csv 內以論文比例 46:54 拆分，屬假設
     #     （agg_p_nom_minmax_KR2036.csv 是逼近論文 Table 2 的版本，僅供對照）
-    file: data/agg_p_nom_minmax_KR2036_BPLE.csv
+    file: data/agg_p_nom_minmax_KR2036_Kwak.csv
     # >>> KR **必須是 true**。false 代表上下限只管「新建量」，
     #     既有的 48 GW CCGT / 23 GW 太陽能會疊加上去，總量會爆掉。
     include_existing: true

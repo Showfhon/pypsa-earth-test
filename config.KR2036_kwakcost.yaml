@@ -49,7 +49,7 @@ enable:
 custom_rules: []
 
 run:
-  name: "KR2036_opus"           # >>> KR
+  name: "KR2036_kwakcost"       # >>> KR
   sector_name: ""
   shared_cutouts: true
   allow_scenario_failure: false

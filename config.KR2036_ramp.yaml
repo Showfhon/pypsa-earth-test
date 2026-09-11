@@ -49,7 +49,7 @@ enable:
 custom_rules: []
 
 run:
-  name: "KR2036_opus"           # >>> KR
+  name: "KR2036_ramp"           # >>> KR
   sector_name: ""
   shared_cutouts: true
   allow_scenario_failure: false
@@ -252,6 +252,21 @@ electricity:
       Offshore: [offwind-ac, offwind-dc]
       Onshore: [onwind]
       PV: [solar]
+  conventional_dynamics:
+    # ramp_limit_* 以「每小時」的 p_nom 比例給定；prepare_network.py 會依 snapshot
+    # 長度換算（3H 乘 3）並上限 1.0。沒有這個區塊時程式行為完全不變。
+    # p_min_pu 不隨 snapshot 長度改變。
+    nuclear:
+      p_min_pu: 0.7
+      ramp_limit_up: 0.1
+      ramp_limit_down: 0.1
+    coal:
+      p_min_pu: 0.35
+      ramp_limit_up: 0.3
+      ramp_limit_down: 0.3
+    CCGT:
+      ramp_limit_up: 0.5
+      ramp_limit_down: 0.5
 
 lines:
   use_country_specific_types: false
