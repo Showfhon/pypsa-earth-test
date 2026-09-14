@@ -343,8 +343,12 @@ def apply_conventional_dynamics(n, dynamics, hours_per_snapshot=1.0):
     n : pypsa.Network
     dynamics : dict
         Maps a carrier to a dict that may hold ``p_min_pu`` (per unit of
-        ``p_nom``) and ``ramp_limit_up`` / ``ramp_limit_down`` (per unit of
-        ``p_nom`` **per hour**).
+        ``p_nom``), ``ramp_limit_up`` / ``ramp_limit_down`` (per unit of
+        ``p_nom`` **per hour**), ``p_max_pu`` (per unit of ``p_nom``, static)
+        and ``p_nom_target`` (total capacity in MW the carrier is scaled to,
+        distributed over the existing generators in proportion to their
+        current ``p_nom``; ``p_nom_min`` / ``p_nom_max`` are scaled by the
+        same ratio where finite).
     hours_per_snapshot : float
         Length of one snapshot in hours. Ramp rates are given per hour and are
         scaled to the snapshot length, then clipped at 1.0 because a unit can
@@ -353,7 +357,10 @@ def apply_conventional_dynamics(n, dynamics, hours_per_snapshot=1.0):
     Notes
     -----
     Does nothing when ``dynamics`` is empty, so runs whose config omits
-    ``electricity: conventional_dynamics`` are unaffected.
+    ``electricity: conventional_dynamics`` are unaffected. Raises if
+    ``p_max_pu`` is requested for a carrier that already has a per-generator
+    time series in ``n.generators_t.p_max_pu`` (typical of renewable
+    carriers), rather than silently overwriting it.
     """
     if not dynamics:
         return
@@ -376,6 +383,25 @@ def apply_conventional_dynamics(n, dynamics, hours_per_snapshot=1.0):
                 value = min(float(params[attr]) * hours_per_snapshot, 1.0)
                 n.generators.loc[idx, attr] = value
                 applied[attr] = value
+        if "p_max_pu" in params:
+            ts_cols = idx.intersection(n.generators_t.p_max_pu.columns)
+            if len(ts_cols) > 0:
+                raise ValueError(
+                    f"conventional_dynamics: carrier '{carrier}' has a "
+                    f"per-generator p_max_pu time series for {list(ts_cols)}; "
+                    "refusing to overwrite it with a static value."
+                )
+            value = float(params["p_max_pu"])
+            n.generators.loc[idx, "p_max_pu"] = value
+            applied["p_max_pu"] = value
+        if "p_nom_target" in params:
+            target = float(params["p_nom_target"])
+            ratio = _scale_p_nom_to_target(n, idx, target)
+            if ratio is not None:
+                for bound in ("p_nom_min", "p_nom_max"):
+                    finite = n.generators.loc[idx, bound] != np.inf
+                    n.generators.loc[idx[finite], bound] *= ratio
+            applied["p_nom_target"] = round(n.generators.loc[idx, "p_nom"].sum(), 1)
 
         logger.info(
             f"conventional_dynamics: {carrier} ({len(idx)} generators) -> {applied}"
