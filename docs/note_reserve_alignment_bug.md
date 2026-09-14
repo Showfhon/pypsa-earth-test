@@ -1,6 +1,6 @@
 # Operational reserve makes must-run generators infeasible when load shedding is enabled
 
-Draft text for a PyPSA-Earth GitHub issue. Not yet submitted.
+Internal record of a bug found and fixed locally. Not reported upstream.
 
 ---
 
@@ -37,11 +37,11 @@ n.model.add_constraints(lhs <= rhs, name="gen_updated_capacity_constraint")
 `rhs` is ordered like `n.generators.index`, while `lhs` carries its own `Generator`
 coordinate whose order differs once the generator set changes.
 
-Interestingly, `add_CCL_constraints()` in the same file already documents this exact
-hazard in its docstring ("the grouper is built from the model's 'Generator-ext'
-coordinate because linopy >= 0.3.9 aligns groupers by position and refuses to
-reindex"), so the pitfall is known — `update_capacity_constraint()` was just not
-covered.
+`add_CCL_constraints()` in upstream v0.9.0 has the same positional alignment
+problem: it groups `Generator-p_nom`, which spans every extendable generator, by a
+grouper built from only the CCL-carrier subset. We have already rewritten that
+function locally. This reserve constraint is therefore the second instance of the
+same root cause rather than an isolated defect.
 
 ## How to reproduce
 
