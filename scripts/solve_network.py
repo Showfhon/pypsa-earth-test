@@ -573,6 +573,56 @@ def add_operational_reserve_margin(n, sns, config):
     update_capacity_constraint(n)
 
 
+def add_storage_min_total_constraints(n, config):
+    """
+    Minimum total installed capacity per storage carrier.
+
+    Reads ``electricity: storage_min_total`` as a mapping of storage carrier to
+    the minimum total ``p_nom`` in MW, e.g.
+
+    .. code:: yaml
+
+        electricity:
+          storage_min_total:
+            battery: 30090
+
+    Capacity of non-extendable units of the carrier counts towards the target
+    and is moved to the right-hand side. Does nothing when the key is absent,
+    so configs that omit it are unaffected.
+    """
+    limits = (config["electricity"] or {}).get("storage_min_total")
+    if not limits:
+        return
+
+    for carrier, target in limits.items():
+        carrier_i = n.storage_units.index[n.storage_units.carrier == carrier]
+        if carrier_i.empty:
+            logger.warning(
+                f"storage_min_total: no storage units with carrier '{carrier}', skipped."
+            )
+            continue
+
+        ext_i = carrier_i.intersection(
+            n.storage_units.index[n.storage_units.p_nom_extendable]
+        )
+        fixed = n.storage_units.p_nom[carrier_i.difference(ext_i)].sum()
+        if ext_i.empty:
+            logger.warning(
+                f"storage_min_total: no extendable '{carrier}' units, skipped "
+                f"(fixed capacity {fixed:.1f} MW vs target {float(target):.1f} MW)."
+            )
+            continue
+
+        rhs = float(target) - fixed
+        # Selected by label and summed to a scalar, so no positional alignment.
+        lhs = n.model["StorageUnit-p_nom"].loc[ext_i].sum()
+        n.model.add_constraints(lhs >= rhs, name=f"storage_min_total_{carrier}")
+        logger.info(
+            f"storage_min_total: {carrier} >= {float(target):,.1f} MW "
+            f"({len(ext_i)} extendable units, {fixed:,.1f} MW fixed)"
+        )
+
+
 def add_battery_constraints(n):
     """
     Add constraint ensuring that charger = discharger, i.e.
@@ -1145,6 +1195,7 @@ def extra_functionality(n, snapshots):
         if "EQ" in o:
             add_EQ_constraints(n, o)
 
+    add_storage_min_total_constraints(n, config)
     add_battery_constraints(n)
     add_lossy_bidirectional_link_constraints(n)
 
