@@ -1,0 +1,300 @@
+Restricted license - for non-production use only - expires 2027-11-29
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/pulp/apis/gurobi_api.py:170: UserWarning: GUROBI error: Unknown parameter '_test'.
+  warnings.warn("GUROBI error: {}.".format(e))
+Config file config.default.yaml is extended by additional config specified via the command line.
+Config file configs/plotting.default.yaml is extended by additional config specified via the command line.
+Config file configs/solving.default.yaml is extended by additional config specified via the command line.
+Config file configs/bundle_config.yaml is extended by additional config specified via the command line.
+Config file configs/powerplantmatching_config.yaml is extended by additional config specified via the command line.
+Config file config.yaml is extended by additional config specified via the command line.
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:245: FutureWarning: 'scenario.demand' is deprecated, use 'demand_data.scenario' instead.
+  warn("scenario.demand", "demand_data.scenario")
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:253: FutureWarning: 'export.h2export (list)' is deprecated, use 'export.h2export (scalar)' instead.
+  warn("export.h2export (list)", "export.h2export (scalar)")
+The PyPSA meets Earth initiative also supports dedicated regional models. See the documentation at https://pypsa-earth.readthedocs.io/en/latest/user-guide/customization/basic-setup/
+Demand data folder: data/ssp2-2.6/2040/era5_2018, load path is ['data/ssp2-2.6/2040/era5_2018/Asia.nc'].
+Expected files: Asia.nc
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 4
+Rules claiming more threads will be scaled down.
+Job stats:
+job              count
+-------------  -------
+solve_network        1
+total                1
+
+Select jobs to execute...
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/stopit/__init__.py:10: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+
+[Mon Sep 14 05:02:06 2026]
+rule solve_network:
+    input: networks/KR2036_kwak_full_10n3h/elec_s_10_ec_lcopt_Co2L-CCL-3H.nc, data/agg_p_nom_minmax_KR2036_KwakFull.csv
+    output: results/KR2036_kwak_full_10n3h/networks/elec_s_10_ec_lcopt_Co2L-CCL-3H.nc
+    log: logs/KR2036_kwak_full_10n3h/solve_network/elec_s_10_ec_lcopt_Co2L-CCL-3H_solver.log, logs/KR2036_kwak_full_10n3h/solve_network/elec_s_10_ec_lcopt_Co2L-CCL-3H_python.log
+    jobid: 0
+    benchmark: benchmarks/KR2036_kwak_full_10n3h/solve_network/elec_s_10_ec_lcopt_Co2L-CCL-3H
+    reason: Missing output files: results/KR2036_kwak_full_10n3h/networks/elec_s_10_ec_lcopt_Co2L-CCL-3H.nc
+    wildcards: simpl=, clusters=10, ll=copt, opts=Co2L-CCL-3H
+    threads: 4
+    resources: tmpdir=/tmp, mem=11950
+
+Restricted license - for non-production use only - expires 2027-11-29
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/pulp/apis/gurobi_api.py:170: UserWarning: GUROBI error: Unknown parameter '_test'.
+  warnings.warn("GUROBI error: {}.".format(e))
+Config file config.default.yaml is extended by additional config specified via the command line.
+Config file configs/plotting.default.yaml is extended by additional config specified via the command line.
+Config file configs/solving.default.yaml is extended by additional config specified via the command line.
+Config file configs/bundle_config.yaml is extended by additional config specified via the command line.
+Config file configs/powerplantmatching_config.yaml is extended by additional config specified via the command line.
+Config file config.yaml is extended by additional config specified via the command line.
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:245: FutureWarning: 'scenario.demand' is deprecated, use 'demand_data.scenario' instead.
+  warn("scenario.demand", "demand_data.scenario")
+/home/showfhon/pypsa-earth/./scripts/_helpers.py:253: FutureWarning: 'export.h2export (list)' is deprecated, use 'export.h2export (scalar)' instead.
+  warn("export.h2export (list)", "export.h2export (scalar)")
+The PyPSA meets Earth initiative also supports dedicated regional models. See the documentation at https://pypsa-earth.readthedocs.io/en/latest/user-guide/customization/basic-setup/
+Demand data folder: data/ssp2-2.6/2040/era5_2018, load path is ['data/ssp2-2.6/2040/era5_2018/Asia.nc'].
+Expected files: Asia.nc
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 4
+Rules claiming more threads will be scaled down.
+Provided resources: mem=11950
+Select jobs to execute...
+/home/showfhon/miniconda3/envs/pypsa-earth/lib/python3.11/site-packages/stopit/__init__.py:10: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+Changing to shadow directory: /home/showfhon/pypsa-earth/.snakemake/shadow/tmp7c3fxxta
+INFO:pypsa.io:Imported network elec_s_10_ec_lcopt_Co2L-CCL-3H.nc has buses, carriers, generators, global_constraints, lines, loads, storage_units
+WARNING:pypsa.consistency:Encountered nan's in static data for columns ['lifetime'] of component 'StorageUnit'.
+WARNING:pypsa.consistency:Encountered nan's in static data for columns ['lifetime'] of component 'StorageUnit'.
+Adding per carrier generation capacity constraints for individual countries
+INFO:__main__:Adding per carrier generation capacity constraints for individual countries
+CCL: csv index [('KR', 'solar'), ('KR', 'onwind'), ('KR', 'offwind-ac+offwind-dc'), ('KR', 'CCGT'), ('KR', 'nuclear'), ('KR', 'biomass')]
+INFO:__main__:CCL: csv index [('KR', 'solar'), ('KR', 'onwind'), ('KR', 'offwind-ac+offwind-dc'), ('KR', 'CCGT'), ('KR', 'nuclear'), ('KR', 'biomass')]
+CCL: model groups [('KR', 'biomass'), ('KR', 'CCGT'), ('KR', 'solar'), ('KR', 'offwind-ac+offwind-dc'), ('KR', 'onwind'), ('KR', 'nuclear')]
+INFO:__main__:CCL: model groups [('KR', 'biomass'), ('KR', 'CCGT'), ('KR', 'solar'), ('KR', 'offwind-ac+offwind-dc'), ('KR', 'onwind'), ('KR', 'nuclear')]
+CCL: include_existing=True, fixed capacity per group {('KR', 'coal'): 27100.0, ('KR', 'load shedding'): 137539.2, ('KR', 'oil'): 770.6, ('KR', 'ror'): 194.0}
+INFO:__main__:CCL: include_existing=True, fixed capacity per group {('KR', 'coal'): 27100.0, ('KR', 'load shedding'): 137539.2, ('KR', 'oil'): 770.6, ('KR', 'ror'): 194.0}
+CCL: applied 6 minimum and 6 maximum constraints
+INFO:__main__:CCL: applied 6 minimum and 6 maximum constraints
+setting CHP constraints
+INFO:__main__:setting CHP constraints
+no h2 temporal constraint set
+INFO:__main__:no h2 temporal constraint set
+INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.model:Solver logs written to `logs/KR2036_kwak_full_10n3h/solve_network/elec_s_10_ec_lcopt_Co2L-CCL-3H_solver.log`.
+INFO:linopy.model:Solver options:
+ - threads: 1
+ - solver: ipm
+ - run_crossover: off
+ - presolve: on
+ - small_matrix_value: 1e-6
+ - large_matrix_value: 1e9
+ - primal_feasibility_tolerance: 1e-5
+ - dual_feasibility_tolerance: 1e-5
+ - ipm_optimality_tolerance: 0.0001
+ - parallel: on
+ - random_seed: 123
+INFO:linopy.io:Writing objective.
+Writing constraints.:   0%|[38;2;128;191;255m          [0m| 0/36 [00:00<?, ?it/s]Writing constraints.:  17%|[38;2;128;191;255m█▋        [0m| 6/36 [00:00<00:00, 59.08it/s]Writing constraints.:  33%|[38;2;128;191;255m███▎      [0m| 12/36 [00:00<00:02, 10.98it/s]Writing constraints.:  42%|[38;2;128;191;255m████▏     [0m| 15/36 [00:01<00:02,  9.85it/s]Writing constraints.:  47%|[38;2;128;191;255m████▋     [0m| 17/36 [00:01<00:01, 10.48it/s]Writing constraints.:  53%|[38;2;128;191;255m█████▎    [0m| 19/36 [00:01<00:01, 11.52it/s]Writing constraints.:  58%|[38;2;128;191;255m█████▊    [0m| 21/36 [00:01<00:01, 12.42it/s]Writing constraints.:  64%|[38;2;128;191;255m██████▍   [0m| 23/36 [00:01<00:00, 13.34it/s]Writing constraints.:  69%|[38;2;128;191;255m██████▉   [0m| 25/36 [00:01<00:00, 13.92it/s]Writing constraints.:  75%|[38;2;128;191;255m███████▌  [0m| 27/36 [00:02<00:00, 14.66it/s]Writing constraints.:  81%|[38;2;128;191;255m████████  [0m| 29/36 [00:02<00:00, 10.83it/s]Writing constraints.:  86%|[38;2;128;191;255m████████▌ [0m| 31/36 [00:02<00:00, 10.05it/s]Writing constraints.:  97%|[38;2;128;191;255m█████████▋[0m| 35/36 [00:02<00:00, 12.66it/s]Writing constraints.: 100%|[38;2;128;191;255m██████████[0m| 36/36 [00:03<00:00, 10.96it/s]
+Writing continuous variables.:   0%|[38;2;128;191;255m          [0m| 0/11 [00:00<?, ?it/s]Writing continuous variables.:  64%|[38;2;128;191;255m██████▎   [0m| 7/11 [00:00<00:00, 68.46it/s]Writing continuous variables.: 100%|[38;2;128;191;255m██████████[0m| 11/11 [00:00<00:00, 62.67it/s]
+INFO:linopy.io: Writing time: 3.56s
+INFO:linopy.solvers:Log file at /home/showfhon/pypsa-earth/logs/KR2036_kwak_full_10n3h/solve_network/elec_s_10_ec_lcopt_Co2L-CCL-3H_solver.log
+Running HiGHS 1.15.1 (git hash: n/a): Copyright (c) 2026 under MIT licence terms
+Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+LP linopy-problem-a7u15tsv has 1454237 rows; 721275 cols; 3465923 nonzeros
+Coefficient ranges:
+  Matrix  [1e-04, 3e+01]
+  Cost    [3e-02, 4e+05]
+  Bound   [4e-01, 1e+10]
+  RHS     [3e-01, 1e+08]
+WARNING: Problem has some excessively large column bounds
+WARNING: Problem has some excessively large row bounds
+WARNING:    Consider scaling the    bounds by 1e-5, or setting the user_bound_scale option to -14
+Presolving model
+759890 rows, 609913 cols, 2549046 nonzeros 2s
+Dependent equations search running on 75744 equations with time limit of 1000.00s
+Dependent equations search removed 0 rows and 0 nonzeros in 0.01s (limit = 1000.00s)
+683788 rows, 560097 cols, 2439330 nonzeros 6s
+Presolve reductions: rows 683788(-770449); columns 560097(-161178); nonzeros 2439330(-1026593) 
+Solving the presolved LP
+IPX model has 683788 rows, 560101 columns and 2439334 nonzeros
+Input
+    Number of variables:                                560101
+    Number of free variables:                           26139
+    Number of constraints:                              683788
+    Number of equality constraints:                     75750
+    Number of matrix entries:                           2439334
+    Matrix range:                                       [1e-04, 3e+01]
+    RHS range:                                          [3e-01, 1e+08]
+    Objective range:                                    [3e-02, 4e+05]
+    Bounds range:                                       [3e-01, 7e+04]
+Preprocessing
+    Dualized model:                                     no
+    Number of dense columns:                            81
+    Range of scaling factors:                           [5.00e-01, 4.00e+00]
+    Scaled cost norm:                                   443136
+    Scaled bounds norm:                                 1.499e+08
+IPX version 1.0
+Interior point solve
+ Iter       primal obj         dual obj       pinf       dinf       gap      time
+   0    1.91715374e+12  -2.28778209e+13   9.95e-04   1.44e-01  2.37e+00      11.1
+ Constructing starting basis...
+ Iter       primal obj         dual obj       pinf       dinf       gap      time
+   1    1.07704926e+12  -6.65730104e+13   9.79e-04   9.55e-02  2.07e+00      32.1
+   2   -2.53737825e+11  -1.02316146e+14   9.22e-04   6.57e-02  1.99e+00      47.5
+   3    1.53376987e+13  -1.10125254e+14   8.53e-04   5.91e-02  2.65e+00      63.4
+   4    1.10563720e+13  -1.48561748e+14   6.12e-04   3.75e-02  2.32e+00      89.5
+   5    7.74866733e+12  -1.74741984e+14   2.43e-04   1.78e-02  2.19e+00     169.7
+   6    7.59153062e+12  -1.94557944e+14   1.06e-04   4.42e-03  2.16e+00     266.3
+    Start  factorization  17: nonzeros in basis =   1157095                 336.0
+   7    7.87168486e+12  -1.58637926e+14   5.21e-05   7.05e-04  2.21e+00     375.7
+    Start  factorization  23: nonzeros in basis =   1168509                 447.2
+    Start  factorization  27: nonzeros in basis =   1168287                 515.8
+    Start  factorization  31: nonzeros in basis =   1168119                 587.6
+    Start  factorization  35: nonzeros in basis =   1167929                 654.9
+    Start  factorization  40: nonzeros in basis =   1167705                 725.7
+   8    9.97870345e+12  -1.69094397e+14   2.27e-05   3.80e-04  2.25e+00     829.1
+   9    1.03150337e+13  -1.70534763e+14   2.03e-05   1.75e-04  2.26e+00     885.8
+  10    1.23557143e+13  -1.61579855e+14   1.12e-05   1.06e-04  2.33e+00     928.4
+  11    1.47513692e+13  -1.59479343e+14   6.78e-06   8.28e-05  2.41e+00     963.0
+  12    1.49497671e+13  -9.01898631e+13   5.29e-06   7.06e-06  2.79e+00     995.0
+  13    1.56311820e+13  -6.82634036e+13   2.57e-06   2.89e-06  3.19e+00    1020.0
+  14    1.20046873e+13  -3.01846272e+13   5.34e-07   3.85e-11  4.64e+00    1046.5
+  15    7.04692567e+12  -9.01608812e+12   2.55e-07   2.69e-11  1.63e+01    1085.8
+    Start  factorization  50: nonzeros in basis =   1288842                1186.4
+    Start  factorization  51: nonzeros in basis =   1317640                1278.9
+  16    4.31068895e+12  -8.74093408e+12   2.44e-08   8.07e-12  5.89e+00    1294.2
+    Start  factorization  54: nonzeros in basis =   1333624                1368.8
+  17    1.97815291e+12  -3.01724150e+12   3.83e-09   6.86e-12  9.61e+00    1387.2
+    Start  factorization  57: nonzeros in basis =   1341038                1452.3
+    Start  factorization  60: nonzeros in basis =   1351364                1545.1
+  18    1.16964716e+12  -2.20619470e+12   2.09e-09   5.40e-12  6.51e+00    1578.8
+    Start  factorization  64: nonzeros in basis =   1373314                1660.8
+  19    1.02647889e+12  -1.01255885e+12   1.73e-09   3.09e-12  2.93e+02    1689.6
+    Start  factorization  68: nonzeros in basis =   1373587                1770.6
+  20    5.57307606e+11  -1.12314350e+12   1.52e-10   1.21e-12  5.94e+00    1794.5
+    Start  factorization  71: nonzeros in basis =   1383041                1859.4
+  21    2.40492830e+11  -5.70227161e+11   4.51e-11   5.88e-13  4.92e+00    1905.0
+    Start  factorization  75: nonzeros in basis =   1403130                1991.2
+  22    2.40243970e+11  -5.62813664e+11   4.47e-11   8.47e-13  4.98e+00    2078.1
+  23    2.38885604e+11  -5.38317668e+11   3.91e-11   5.64e-13  5.19e+00    2166.7
+  24    2.32608945e+11  -5.10698616e+11   3.60e-11   7.73e-13  5.35e+00    2243.1
+  25    2.18445146e+11  -4.13074579e+11   2.93e-11   1.99e-13  6.49e+00    2305.7
+  26    1.43325742e+11  -3.30572021e+11   1.51e-11   3.19e-13  5.06e+00    2377.2
+  27    1.07614226e+11  -1.69721231e+11   6.37e-12   1.87e-13  8.93e+00    2459.5
+  28    1.02410746e+11  -1.54809954e+11   4.87e-12   2.75e-13  9.82e+00    2566.2
+  29    8.46930549e+10  -1.03472966e+11   2.78e-12   1.01e-13  2.00e+01    2652.4
+  30    8.35598375e+10  -9.59998350e+10   2.35e-12   1.18e-13  2.89e+01    2739.4
+  31    7.75722151e+10  -6.56340748e+10   1.80e-12   1.43e-13  2.40e+01    2804.3
+  32    7.18166348e+10  -4.74246063e+10   1.26e-12   1.47e-13  9.78e+00    2878.2
+  33    6.36836753e+10  -3.42473726e+10   6.95e-13   6.53e-14  6.65e+00    2964.8
+  34    6.34484085e+10  -2.83375156e+10   5.85e-13   1.41e-13  5.23e+00    3059.8
+  35    6.21915183e+10  -2.65773028e+10   4.11e-13   6.16e-14  4.99e+00    3142.9
+  36    5.67070966e+10  -2.97953918e+09   2.39e-13   6.65e-14  2.22e+00    3207.1
+  37    5.64912645e+10   1.55005035e+09   2.16e-13   6.94e-14  1.89e+00    3282.6
+  38    5.49399109e+10   8.87202052e+09   1.47e-13   2.94e-14  1.44e+00    3353.2
+  39    5.29724482e+10   1.66447606e+10   8.38e-14   4.52e-14  1.04e+00    3431.2
+  40    5.23493089e+10   2.26686923e+10   6.96e-14   1.71e-14  7.91e-01    3529.7
+  41    5.06879647e+10   2.70119331e+10   3.54e-14   3.34e-14  6.09e-01    3602.9
+  42    4.97388155e+10   3.02817828e+10   1.94e-14   9.72e-15  4.86e-01    3703.0
+  43    4.94187879e+10   3.08501185e+10   1.56e-14   2.10e-14  4.63e-01    3777.6
+  44    4.89309673e+10   3.14037026e+10   1.40e-14   2.56e-14  4.36e-01    3858.0
+  45    4.89786079e+10   3.28995565e+10   1.29e-14   2.15e-14  3.93e-01    3947.6
+  46    4.85983743e+10   3.19036786e+10   1.29e-14   1.68e-14  4.15e-01    4022.5
+  47    4.78373017e+10   3.44791522e+10   1.02e-14   1.27e-14  3.25e-01    4080.7
+  48    4.73610791e+10   3.50204359e+10   1.50e-14   1.44e-14  3.00e-01    4141.0
+    Start  factorization 120: nonzeros in basis =   1557251                4222.1
+  49    4.63961634e+10   3.69214186e+10   4.93e-15   1.26e-14  2.27e-01    4249.6
+    Start  factorization 123: nonzeros in basis =   1567616                4317.1
+  50    4.63133622e+10   3.71783993e+10   4.50e-15   1.14e-14  2.19e-01    4350.5
+  51    4.57918462e+10   3.82358407e+10   7.11e-15   1.44e-14  1.80e-01    4416.0
+  52    4.59897629e+10   3.83609663e+10   3.46e-15   1.17e-14  1.81e-01    4488.7
+  53    4.59512197e+10   3.84387223e+10   1.51e-14   1.05e-14  1.78e-01    4556.0
+  54    4.54162312e+10   3.89549620e+10   4.92e-15   5.12e-15  1.53e-01    4597.4
+  55    4.53075905e+10   3.92074227e+10   1.07e-14   1.10e-14  1.44e-01    4655.0
+  56    4.52048128e+10   3.95566670e+10   4.69e-15   8.41e-15  1.33e-01    4703.9
+  57    4.50562463e+10   4.00396221e+10   7.08e-15   7.75e-15  1.18e-01    4752.9
+  58    4.50482769e+10   4.00857827e+10   1.70e-15   6.04e-15  1.17e-01    4797.3
+  59    4.48647727e+10   4.03971461e+10   5.50e-15   7.22e-15  1.05e-01    4837.2
+  60    4.47703579e+10   4.05983616e+10   8.41e-15   4.73e-15  9.77e-02    4876.8
+  61    4.45717976e+10   4.10233948e+10   1.92e-14   5.65e-15  8.29e-02    4916.8
+  62    4.44892793e+10   4.09945338e+10   4.16e-15   4.99e-15  8.18e-02    4966.6
+  63    4.41904503e+10   4.15711504e+10   1.31e-14   6.17e-15  6.11e-02    5013.8
+  64    4.40237629e+10   4.17839073e+10   6.95e-16   6.57e-15  5.22e-02    5079.0
+  65    4.38601606e+10   4.19917979e+10   5.72e-15   8.14e-15  4.35e-02    5132.3
+  66    4.38341283e+10   4.21009415e+10   1.60e-16   4.73e-15  4.03e-02    5180.1
+  67    4.36982821e+10   4.23525953e+10   4.95e-15   6.17e-15  3.13e-02    5219.9
+  68    4.36978801e+10   4.23756421e+10   2.81e-15   5.91e-15  3.07e-02    5263.2
+  69    4.36243975e+10   4.25735736e+10   3.09e-15   6.44e-15  2.44e-02    5308.5
+  70    4.36191409e+10   4.25929627e+10   1.00e-15   4.60e-15  2.38e-02    5347.3
+  71    4.35673882e+10   4.26935212e+10   7.82e-15   8.28e-15  2.03e-02    5386.5
+  72    4.35341142e+10   4.27632728e+10   1.00e-17   7.36e-15  1.79e-02    5428.9
+  73    4.34653601e+10   4.29205909e+10   3.84e-15   3.94e-15  1.26e-02    5465.4
+  74    4.34440147e+10   4.29749646e+10   3.07e-15   4.73e-15  1.09e-02    5505.8
+  75    4.33878670e+10   4.30693143e+10   1.25e-15   7.22e-15  7.37e-03    5549.9
+  76    4.33831621e+10   4.30769329e+10   4.45e-15   3.81e-15  7.08e-03    5625.4
+  77    4.33655017e+10   4.31032384e+10   5.64e-15   6.70e-15  6.07e-03    5668.2
+  78    4.33247521e+10   4.31258862e+10   1.57e-15   5.78e-15  4.60e-03    5713.3
+  79    4.33112918e+10   4.31692006e+10   8.82e-15   6.96e-15  3.29e-03    5785.1
+  80    4.32933917e+10   4.31921644e+10   8.87e-15   4.60e-15  2.34e-03    5840.0
+    Start  factorization 163: nonzeros in basis =   1566517                5912.8
+  81    4.32879903e+10   4.32093943e+10   5.43e-15   6.17e-15  1.82e-03    5929.5
+  82    4.32752945e+10   4.32214052e+10   3.17e-15   6.44e-15  1.25e-03    5975.6
+  83    4.32711465e+10   4.32238446e+10   5.49e-15   6.83e-15  1.09e-03    6008.6
+  84    4.32620855e+10   4.32326562e+10   8.80e-15   8.01e-15  6.80e-04    6045.0
+  85    4.32568107e+10   4.32363342e+10   4.42e-15   5.91e-15  4.73e-04    6081.8
+  86    4.32527710e+10   4.32402779e+10   9.31e-16   4.86e-15  2.89e-04    6131.7
+  87    4.32519023e+10   4.32412480e+10   5.82e-15   6.30e-15  2.46e-04    6161.6
+  88    4.32507339e+10   4.32441642e+10   7.49e-15   4.07e-15  1.52e-04    6189.1
+  89    4.32503352e+10   4.32448536e+10   5.66e-15   6.30e-15  1.27e-04    6214.1
+  90*   4.32490607e+10   4.32458642e+10   7.60e-15   8.28e-15  7.39e-05    6239.1
+Summary
+    Runtime:                                            6239.14s
+    Status interior point solve:                        optimal
+    Status crossover:                                   not run
+    objective value:                                    4.32490607e+10
+    interior solution primal residual (abs/rel):        8.64e-07 / 5.77e-15
+    interior solution dual residual (abs/rel):          3.67e-09 / 8.28e-15
+    interior solution objective gap (abs/rel):          3.20e+06 / 7.39e-05
+Ipx: IPM       optimal
+WARNING: Solution optimality conditions: Before postsolve
+num/max      0 /        0 (relative      0 /        0) primal infeasibilities     (tolerance = 1e-05)
+num/max   1953 /      3.6 (relative      0 / 8.18e-06)   dual infeasibilities     (tolerance = 1e-05)
+num/max      0 / 5.96e-08 (relative      0 / 9.48e-13) primal residual errors     (tolerance = 1e-07)
+num/max      0 / 9.56e-10 (relative      0 / 2.17e-15)   dual residual errors     (tolerance = 1e-07)
+                                         1 /  3.2e-05  P-D objective error        (tolerance = 1e-07)
+WARNING: LP solver claims optimality, but with
+WARNING:                      3.2e-05 relative P-D objective error    (tolerance = 1e-07)
+WARNING: Model status changed from "Optimal" to "Unknown" since relative violation of tolerances is      320
+
+Performed postsolve
+
+Model name          : linopy-problem-a7u15tsv
+Model status        : Unknown
+IPM       iterations: 90
+Objective value     :  4.3249060653e+10
+P-D objective error :  3.1992202173e-05
+HiGHS run time      :       6239.43
+WARNING:linopy.solvers:Solution status unknown. Trying to parse solution.
+WARNING:linopy.solvers:Solution parsed successfully.
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: unknown
+Solution: 721275 primals, 1454237 duals
+Objective: 4.32e+10
+Solver model: available
+Solver message: Unknown
+
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Generator-ext-p-lower, Generator-ext-p-upper, Generator-fix-p-ramp_limit_up, Generator-fix-p-ramp_limit_down, Generator-ext-p-ramp_limit_up, Generator-ext-p-ramp_limit_down, Line-ext-s-lower, Line-ext-s-upper, StorageUnit-fix-p_dispatch-lower, StorageUnit-fix-p_dispatch-upper, StorageUnit-ext-p_dispatch-lower, StorageUnit-ext-p_dispatch-upper, StorageUnit-fix-p_store-lower, StorageUnit-fix-p_store-upper, StorageUnit-ext-p_store-lower, StorageUnit-ext-p_store-upper, StorageUnit-fix-state_of_charge-lower, StorageUnit-fix-state_of_charge-upper, StorageUnit-ext-state_of_charge-lower, StorageUnit-ext-state_of_charge-upper, Kirchhoff-Voltage-Law, StorageUnit-energy_balance, agg_p_nom_min, agg_p_nom_max, reserve_margin, gen_updated_capacity_constraint were not assigned to the network.
+INFO:pypsa.io:Exported network 'elec_s_10_ec_lcopt_Co2L-CCL-3H.nc' contains: generators, buses, loads, storage_units, global_constraints, carriers, lines
+Objective function: 43249060653.42991
+INFO:__main__:Objective function: 43249060653.42991
+Objective constant: 12596945033.861347
+INFO:__main__:Objective constant: 12596945033.861347
+Not cleaning up /home/showfhon/pypsa-earth/.snakemake/shadow/tmp7c3fxxta/.snakemake/scripts/tmpzpicsoyk.solve_network.py
+[Mon Sep 14 06:46:35 2026]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: .snakemake/log/2026-09-14T050202.646628.snakemake.log
