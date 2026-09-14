@@ -541,6 +541,11 @@ def update_capacity_constraint(n):
         lhs = dispatch + reserve - capacity_variable * xr.DataArray(p_max_pu[ext_i])
 
     rhs = (p_max_pu[fix_i] * capacity_fixed).reindex(columns=gen_i, fill_value=0)
+    # linopy aligns by position, not by label, so the rhs has to carry the same
+    # generator order as the lhs expression. Without this the fixed generators
+    # receive the extendable generators' zero rhs and a must-run unit whose
+    # p_min_pu is positive becomes infeasible.
+    rhs = rhs.reindex(columns=lhs.indexes["Generator"], fill_value=0)
 
     n.model.add_constraints(lhs <= rhs, name="gen_updated_capacity_constraint")
 
