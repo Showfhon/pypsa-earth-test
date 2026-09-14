@@ -318,6 +318,22 @@ def enforce_autarky(n, only_crossborder=False):
     n.mremove("Link", links_rm)
 
 
+def _scale_p_nom_to_target(n, idx, target):
+    """
+    Scale ``p_nom`` of the generators in ``idx`` proportionally so their sum
+    equals ``target``. Returns the scaling ratio applied (``target / current``,
+    or ``None`` when ``current`` was zero and generators were split evenly).
+    """
+    current = n.generators.loc[idx, "p_nom"].sum()
+    if current > 0:
+        ratio = target / current
+        n.generators.loc[idx, "p_nom"] *= ratio
+        return ratio
+    else:
+        n.generators.loc[idx, "p_nom"] = target / len(idx)
+        return None
+
+
 def apply_conventional_dynamics(n, dynamics, hours_per_snapshot=1.0):
     """
     Constrain conventional generators with a minimum output and ramp limits.
@@ -364,6 +380,76 @@ def apply_conventional_dynamics(n, dynamics, hours_per_snapshot=1.0):
         logger.info(
             f"conventional_dynamics: {carrier} ({len(idx)} generators) -> {applied}"
         )
+
+
+def apply_unit_commitment(n, unit_commitment, hours_per_snapshot=1.0):
+    """
+    Turn conventional carriers into committable units with fixed capacity.
+
+    Parameters
+    ----------
+    n : pypsa.Network
+    unit_commitment : dict
+        Maps a carrier to a dict that may hold ``p_nom`` (total capacity in MW
+        the carrier is pinned to, distributed over the existing generators in
+        proportion to their current ``p_nom``; omit to keep capacity as is),
+        ``p_min_pu``, ``ramp_limit_up`` / ``ramp_limit_down`` (per unit of
+        ``p_nom`` **per hour**), ``min_up_time`` / ``min_down_time`` (in
+        **hours**) and ``start_up_cost`` (in **EUR/MW** of ``p_nom``).
+    hours_per_snapshot : float
+        Length of one snapshot in hours. Ramp rates are scaled to the snapshot
+        length and clipped at 1.0; minimum up/down times are converted to a
+        number of snapshots by rounding to nearest, with a floor of 1.
+
+    Notes
+    -----
+    Committable generators cannot be extendable in PyPSA, so every carrier
+    listed here has ``p_nom_extendable`` set to False. Does nothing when
+    ``unit_commitment`` is empty, so runs whose config omits
+    ``electricity: unit_commitment`` are unaffected.
+    """
+    if not unit_commitment:
+        return
+
+    for carrier, params in unit_commitment.items():
+        idx = n.generators.index[n.generators.carrier == carrier]
+        if idx.empty:
+            logger.warning(
+                f"unit_commitment: no generators with carrier '{carrier}', skipped."
+            )
+            continue
+
+        if "p_nom" in params:
+            _scale_p_nom_to_target(n, idx, float(params["p_nom"]))
+
+        n.generators.loc[idx, "p_nom_extendable"] = False
+        n.generators.loc[idx, "committable"] = True
+
+        applied = {"p_nom": round(n.generators.loc[idx, "p_nom"].sum(), 1)}
+        if "p_min_pu" in params:
+            value = float(params["p_min_pu"])
+            n.generators.loc[idx, "p_min_pu"] = value
+            applied["p_min_pu"] = value
+        for attr in ("ramp_limit_up", "ramp_limit_down"):
+            if attr in params:
+                value = min(float(params[attr]) * hours_per_snapshot, 1.0)
+                n.generators.loc[idx, attr] = value
+                applied[attr] = value
+        for attr in ("min_up_time", "min_down_time"):
+            if attr in params:
+                value = max(int(round(float(params[attr]) / hours_per_snapshot)), 1)
+                n.generators.loc[idx, attr] = value
+                applied[attr] = value
+        if "start_up_cost" in params:
+            # PyPSA charges start_up_cost per start-up of the whole generator,
+            # while the config gives it per MW of installed capacity.
+            per_mw = float(params["start_up_cost"])
+            n.generators.loc[idx, "start_up_cost"] = (
+                per_mw * n.generators.loc[idx, "p_nom"]
+            )
+            applied["start_up_cost"] = f"{per_mw} EUR/MW"
+
+        logger.info(f"unit_commitment: {carrier} ({len(idx)} generators) -> {applied}")
 
 
 def set_line_nom_max(n, lines, links):
@@ -492,6 +578,15 @@ if __name__ == "__main__":
             float(n.snapshot_weightings.objective.iloc[0]) if len(n.snapshots) else 1.0
         )
         apply_conventional_dynamics(n, conventional_dynamics, hours_per_snapshot)
+
+    # Optional: unit commitment for conventional units. Absent from most
+    # configs, in which case this is a no-op.
+    unit_commitment = snakemake.params.electricity.get("unit_commitment")
+    if unit_commitment:
+        hours_per_snapshot = (
+            float(n.snapshot_weightings.objective.iloc[0]) if len(n.snapshots) else 1.0
+        )
+        apply_unit_commitment(n, unit_commitment, hours_per_snapshot)
 
     sanitize_carriers(n, snakemake.config)
     sanitize_locations(n)

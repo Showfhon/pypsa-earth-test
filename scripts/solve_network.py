@@ -1202,6 +1202,12 @@ def solve_network(n, config, solving, **kwargs):
     kwargs["solver_name"] = solving["solver"]["name"]
     kwargs["extra_functionality"] = extra_functionality
 
+    # Optional: solve the LP relaxation of the unit commitment formulation.
+    # Absent from most configs, in which case nothing changes.
+    if cf_solving.get("linearized_unit_commitment", False):
+        kwargs["linearized_unit_commitment"] = True
+        logger.info("Solving with linearized unit commitment.")
+
     skip_iterations = cf_solving.get("skip_iterations", False)
     if not n.lines.s_nom_extendable.any():
         skip_iterations = True
