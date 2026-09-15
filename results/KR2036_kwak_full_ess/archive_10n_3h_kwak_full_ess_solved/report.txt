@@ -1,0 +1,84 @@
+=== results/KR2036_kwak_full_ess/networks/elec_s_10_ec_lcopt_Co2L-CCL-3H.nc ===
+節點 10 | 快照 2920 | 目標函數 4.9102e+10
+求解狀態 HiGHS: Unknown（IPM optimal，P-D 目標誤差 3.75e-05 > HiGHS 內部 1e-07 門檻（違反比 375）；run_crossover=off）
+
+--- 發電機 ---
+               p_nom_opt_MW  p_nom_MW  發電_TWh   容量因數
+carrier                                             
+load shedding      137539.2  137539.2     0.0  0.000
+CCGT                62900.0   44371.7   206.5  0.375
+solar               60326.4   23528.2    75.4  0.143
+offwind-dc          33483.9       0.0   110.7  0.377
+nuclear             31700.0   31161.0   165.0  0.594
+onwind              30000.0    2018.7    43.9  0.167
+coal                27100.0   27100.0    84.8  0.357
+biomass              1980.0     967.1    17.0  0.982
+offwind-ac           1205.1    1204.0     2.8  0.261
+oil                   770.6     770.6     0.0  0.000
+ror                   194.0     194.0     0.3  0.154
+
+總發電 706.2 TWh | 總需求 707.0 TWh
+
+--- 儲能 (StorageUnit) ---
+         p_nom_opt    p_nom  max_hours  充電_TWh  放電_TWh
+carrier                                               
+PHS        5308.22  5308.22        0.0    0.03    0.00
+hydro      1080.56  1080.56        6.0    0.00    1.21
+battery   30090.00     0.00        6.0    8.09    7.72
+battery p_nom_opt 30090.0 MW / 180540.0 MWh（論文 30,090 MW / 180,540 MWh；本情境由 electricity.storage_min_total 外生給定）
+注意：PHS 的 max_hours 為 0（powerplants 的 Duration 缺值，add_electricity 的補值只處理 0 不處理 NaN），
+      因此 PHS 無法充放電，本報告的 PHS 放電必然為 0。此為既有 run 共同狀況，尚未修正。
+
+--- VRE 棄電 ---
+            可發_TWh  實發_TWh  棄電_TWh    棄電率
+carrier                                  
+solar         75.7    75.4    0.28  0.37%
+onwind        45.0    43.9    1.15  2.55%
+offwind-ac     2.9     2.8    0.12  4.04%
+offwind-dc   111.6   110.7    0.88  0.79%
+VRE 合計棄電率 1.03%（論文 2.9%）
+
+--- 全域約束（碳排）---
+                            type     constant          mu
+GlobalConstraint                                         
+CO2Limit          primary_energy  149900000.0 -158.285315
+
+實際碳排 149.9 Mt | 上限 149.9 Mt | 用掉 100.0%
+影子價格 -158.29 EUR/tCO2（mu != 0 代表碳約束有綁定）
+
+--- CCL 邊界 ---
+  solar                        60,326 MW  [59,130, 72,270]  內部
+  onwind                       30,000 MW  [30,000, 33,000]  在下限
+  offwind-ac+offwind-dc        34,689 MW  [34,689, 38,158]  在下限
+  CCGT                         62,900 MW  [62,900, 62,900]  在下限
+  nuclear                      31,700 MW  [31,700, 31,700]  在下限
+  biomass                       1,980 MW  [1,620, 1,980]  在上限
+
+--- 輸電 ---
+AC 線路 s_nom_opt 合計 270.8 GW（原 191.5 GW，擴建 +41.44%；論文 +32%）
+
+卸載量 0.00 TWh（佔需求 0.00%）
+
+--- 價格 ---
+日均價 最高 99.6 / 最低 0.0 / 價差 99.6 EUR/MWh
+全年均價 93.8 EUR/MWh
+
+--- capex（十億 EUR）---
+carrier
+Offshore Wind (DC)      14.752
+Solar                    6.801
+Battery Storage          6.725
+Onshore Wind             6.053
+Nuclear                  4.749
+Coal                     4.529
+Combined-Cycle Gas       4.461
+Ac                       1.453
+Pumped Hydro Storage     0.941
+Biomass                  0.538
+Offshore Wind (AC)       0.531
+Run of River             0.058
+Oil                      0.031
+
+--- 求解 ---
+HiGHS run time 6,815.30 s | IPM 迭代 107 | LP 1,454,238 列 / 721,275 欄 / 3,465,933 非零
+battery StorageUnit capital_cost: 實際 223,511 / 我方公式 224,903 / 論文 Table 2 反推 225,600 EUR/MW/yr
